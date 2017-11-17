@@ -41,7 +41,7 @@ contract RCToken is ERC20, Ownable {
         PublicSale,                                        // Public crowdsale state
         Done                                               // Ending state after ICO
     }
-    icoStages stage;					                   // Crowdfunding current state
+    icoStages stage;                                       // Crowdfunding current state
 
 /*----------------- Events -----------------*/
 
@@ -66,8 +66,8 @@ contract RCToken is ERC20, Ownable {
     }
     
     modifier notBeforeCrowdfundStarts(){                   // Ensures actions can only happen after crowdfund ends
-		require((now >= icoStartsAt) && (now < icoEndsAt));
-		_;
+        require((now >= icoStartsAt) && (now < icoEndsAt));
+        _;
     }
 
     modifier notBeforeCrowdfundEnds(){                     // Ensures actions can only happen after crowdfund ends
@@ -164,18 +164,18 @@ contract RCToken is ERC20, Ownable {
     }
     
     // -------------------------------------------------
-	// Opens pre-sales
-	// -------------------------------------------------
-	function startCrowdfund() external onlyOwner notBeforeCrowdfundStarts returns(bool) {
-		assert(stage == icoStages.Ready);
-		stage = icoStages.PreSale;
+    // Opens pre-sales
+    // -------------------------------------------------
+    function startCrowdfund() external onlyOwner notBeforeCrowdfundStarts returns(bool) {
+        assert(stage == icoStages.Ready);
+        stage = icoStages.PreSale;
     }
     
     // -------------------------------------------------
-	// Returns TRUE if pre-sale is currently going on
-	// -------------------------------------------------
-	function isPreSaleStage() external onlyOwner returns(bool) {
-		return (stage == icoStages.PreSale);
+    // Returns TRUE if pre-sale is currently going on
+    // -------------------------------------------------
+    function isPreSaleStage() external onlyOwner returns(bool) {
+        return (stage == icoStages.PreSale);
     }
     
     // -------------------------------------------------
@@ -262,17 +262,17 @@ contract RCToken is ERC20, Ownable {
         presaleAmountRemaining = presaleAmountRemaining.sub(_amountOfBoughtRCT);    
     }
 
-	// -------------------------------------------------
-	// Adds to balance
-	// -------------------------------------------------
-	function addToBalance(address _address, uint _amount) internal {
-		accounts[_address] = accounts[_address].add(_amount);
-	}
+    // -------------------------------------------------
+    // Adds to balance
+    // -------------------------------------------------
+    function addToBalance(address _address, uint _amount) internal {
+        accounts[_address] = accounts[_address].add(_amount);
+    }
 
-	// -------------------------------------------------
-	// Removes from balance
-	// -------------------------------------------------
-	function decrementBalance(address _address, uint _amount) internal {
-		accounts[_address] = accounts[_address].sub(_amount);
-	}
+    // -------------------------------------------------
+    // Removes from balance
+    // -------------------------------------------------
+    function decrementBalance(address _address, uint _amount) internal {
+        accounts[_address] = accounts[_address].sub(_amount);
+    }
 }
