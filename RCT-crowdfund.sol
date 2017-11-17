@@ -25,22 +25,22 @@ contract RCTCrowdfund is Ownable {
 
 /*----------------- Modifiers -----------------*/
 
-    modifier nonZeroAddress(address _to) {                 // Ensure an address is provided
+    modifier nonZeroAddress(address _to) {                 // Ensures an address is provided
         require(_to != 0x0);
         _;
     }
 
-    modifier nonZeroValue() {                              // Ensure a non-zero value is passed
+    modifier nonZeroValue() {                              // Ensures a non-zero value is passed
         require(msg.value > 0);
         _;
     }
 
-    modifier crowdfundIsActive() {                         // Ensure the crowdfund is ongoing
+    modifier crowdfundIsActive() {                         // Ensures the crowdfund is ongoing
         assert(now >= startsAt && now <= endsAt);
         _;
     }
 
-    modifier notBeforeCrowdfundEnds(){                     // Ensure actions can only happen after crowdfund ends
+    modifier notBeforeCrowdfundEnds(){                     // Ensures actions can only happen after crowdfund ends
         require(now >= endsAt);
         _;
     }
@@ -60,11 +60,19 @@ contract RCTCrowdfund is Ownable {
     }
 
     // -------------------------------------------------
-    // Change main contribution wallet
+    // Changes main contribution wallet
     // -------------------------------------------------    
     function changeWalletAddress(address _wallet) onlyOwner {
         wallet = _wallet;
         WalletAddressChanged(_wallet);
+    }
+    
+    // -------------------------------------------------
+    // Opens the crowdfunding
+    // -------------------------------------------------
+    function openCrowdfund() external onlyOwner returns (bool success) {
+        token.startCrowdfund();
+        return true;
     }
 
     // -------------------------------------------------
@@ -85,7 +93,7 @@ contract RCTCrowdfund is Ownable {
     }
     
     // -------------------------------------------------
-    // Function to close the crowdfund. Any unsold RCT will go back to the foundation.
+    // Closes the crowdfunding. Any unsold RCT will go back to the foundation.
     // -------------------------------------------------
     function closeCrowdfund() external notBeforeCrowdfundEnds onlyOwner returns (bool success) {
         AmountRaised(wallet, weiRaised);
