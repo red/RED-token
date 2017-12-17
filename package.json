@@ -1,5 +1,5 @@
 {
-  "name": "rct",
+  "name": "RCT",
   "version": "1.0.0",
   "description": "Red Community Token",
   "main": "index.js",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/dockimbel/RCT/issues"
   },
-  "homepage": "https://github.com/dockimbel/RCT#readme"
+  "homepage": "https://github.com/dockimbel/RCT#readme",
+  "dependencies": {
+    "zeppelin-solidity": "^1.4.0"
+  }
 }
