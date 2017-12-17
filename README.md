@@ -15,7 +15,8 @@ sudo npm -g i yarn
 ### Prerequisites macOS
 
 ```bash
-brew install node yarn
+brew tap ethereum/ethereum
+brew install node yarn solidity
 ```
 
 ### Common setup
@@ -24,4 +25,9 @@ brew install node yarn
 git clone git@github.com:dockimbel/RCT.git
 cd RCT/
 yarn install
+```
+
+Compile with
+```bash
+yarn build
 ```

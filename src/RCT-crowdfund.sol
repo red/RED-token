@@ -51,7 +51,7 @@ contract RCTCrowdfund is Ownable {
     // -------------------------------------------------    
     // Contract's constructor
     // -------------------------------------------------
-    function RCTCrowdfund(address _tokenAddress) {
+    function RCTCrowdfund(address _tokenAddress) public {
         wallet       = 0x123;                             // ICO wallet address
         startsAt     = 1506873600;                        // Dec 11th 2017, 18:00, GMT+8
         endsAt       = 1515578400;                        // Jan 10th 2018, 18:00, GMT+8

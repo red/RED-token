@@ -27,6 +27,7 @@ contract RCToken is ERC20, Ownable {
     uint256 public bizDevSupply;                           // Business development supply
 
     uint256 public presaleAmountRemaining;                 // Amount of presale tokens remaining at a given time    
+    uint256 public icoStartsAt;                              // Crowdsale ending timestamp
     uint256 public icoEndsAt;                              // Crowdsale ending timestamp
     uint256 public redTeamLockingPeriod;                   // Locking period for Red team's supply
 
@@ -160,7 +161,7 @@ contract RCToken is ERC20, Ownable {
 
         addToBalance(foundationAddress, foundationSupply);
         
-        icoStages stage = icoStages.Ready;                 // Initializes state
+        stage = icoStages.Ready;                 // Initializes state
     }
     
     // -------------------------------------------------
@@ -174,7 +175,7 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Returns TRUE if pre-sale is currently going on
     // -------------------------------------------------
-    function isPreSaleStage() external onlyOwner returns(bool) {
+    function isPreSaleStage() external view onlyOwner returns(bool) {
         return (stage == icoStages.PreSale);
     }
     
