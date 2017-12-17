@@ -6,7 +6,7 @@
 export DAPP_SRC="src"
 export DAPP_OUT="out"
 
-rm -rf out; mkdir out
+rm -rf out
 find "${DAPP_SRC}" -name '*.sol' | while read -r x; do
   dir=${x%\/*}
   dir=${dir#$DAPP_SRC}
