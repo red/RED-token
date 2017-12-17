@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
-import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
-import "github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20.sol";
+import "../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
+import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
 
 contract RCToken is ERC20, Ownable {
 
@@ -90,7 +90,7 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Transfers amount to address
     // -------------------------------------------------
-    function transfer(address _to, uint256 _amount) notBeforeCrowdfundEnds returns (bool success) {
+    function transfer(address _to, uint256 _amount) public notBeforeCrowdfundEnds returns (bool success) {
         require(balanceOf(msg.sender) >= _amount);
         addToBalance(_to, _amount);
         decrementBalance(msg.sender, _amount);
@@ -101,7 +101,7 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Transfers from one address to another (need allowance to be called first)
     // -------------------------------------------------
-    function transferFrom(address _from, address _to, uint256 _amount) notBeforeCrowdfundEnds returns (bool success) {
+    function transferFrom(address _from, address _to, uint256 _amount) public notBeforeCrowdfundEnds returns (bool success) {
         require(allowance(_from, msg.sender) >= _amount);
         decrementBalance(_from, _amount);
         addToBalance(_to, _amount);
@@ -113,7 +113,7 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Approves another address a certain amount of FUEL
     // -------------------------------------------------
-    function approve(address _spender, uint256 _value) returns (bool success) {
+    function approve(address _spender, uint256 _value) public returns (bool success) {
         require((_value == 0) || (allowance(msg.sender, _spender) == 0));
         allowed[msg.sender][_spender] = _value;
         Approval(msg.sender, _spender, _value);
@@ -123,14 +123,14 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Gets an address's FUEL allowance
     // -------------------------------------------------
-    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+    function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
 
     // -------------------------------------------------
     // Gets the FUEL balance of any address
     // -------------------------------------------------
-    function balanceOf(address _owner) constant returns (uint256 balance) {
+    function balanceOf(address _owner) public constant returns (uint256 balance) {
         return accounts[_owner];
     }
     
@@ -140,7 +140,7 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Contract's constructor
     // -------------------------------------------------
-    function RCToken() {
+    function RCToken() public {
         totalSupply      = 200000000 * 1e18;               // 100% - 200 million total RCT with 18 decimals
         
         presaleSupply    =  20000000 * 1e18;               //  10% -  20 million RCT for pre-crowdsale
@@ -190,7 +190,7 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Function for the Crowdfund to transfer tokens
     // -------------------------------------------------
-    function transferFromCrowdfund(address _to, uint256 _amount) onlyCrowdfund nonZeroAmount(_amount) nonZeroAddress(_to) returns (bool success) {
+    function transferFromCrowdfund(address _to, uint256 _amount) public onlyCrowdfund nonZeroAmount(_amount) nonZeroAddress(_to) returns (bool success) {
         require(balanceOf(crowdfundAddress) >= _amount);
         decrementBalance(crowdfundAddress, _amount);
         addToBalance(_to, _amount);
@@ -201,7 +201,7 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Releases Red team supply after locking period is passed
     // -------------------------------------------------
-    function releaseRedTeamTokens() checkRedTeamLockingPeriod onlyOwner returns(bool success) {
+    function releaseRedTeamTokens() public checkRedTeamLockingPeriod onlyOwner returns(bool success) {
         require(redTeamSupply > 0);
         addToBalance(redTeamAddress, redTeamSupply);
         Transfer(0x0, redTeamAddress, redTeamSupply);

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
-import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
-import "github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
+import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./RCT-token.sol";
 
 contract RCTCrowdfund is Ownable {
@@ -62,7 +62,7 @@ contract RCTCrowdfund is Ownable {
     // -------------------------------------------------
     // Changes main contribution wallet
     // -------------------------------------------------    
-    function changeWalletAddress(address _wallet) onlyOwner {
+    function changeWalletAddress(address _wallet) public onlyOwner {
         wallet = _wallet;
         WalletAddressChanged(_wallet);
     }
@@ -79,7 +79,7 @@ contract RCTCrowdfund is Ownable {
     // Function to buy RCT. One can also buy RCT by calling this function directly and send 
     // it to another destination.
     // -------------------------------------------------
-    function buyTokens(address _to) crowdfundIsActive nonZeroAddress(_to) nonZeroValue payable {
+    function buyTokens(address _to) public crowdfundIsActive nonZeroAddress(_to) nonZeroValue payable {
         uint256 weiAmount = msg.value;
         uint256 tokens;
         uint price = 1000;
@@ -107,7 +107,7 @@ contract RCTCrowdfund is Ownable {
     // To contribute, send a value transaction to the crowdfund address.
     // Please include at least 100000 gas.
     // -------------------------------------------------
-    function () payable {
+    function () public payable {
         buyTokens(msg.sender);
     }
 }
