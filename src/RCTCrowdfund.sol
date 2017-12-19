@@ -15,7 +15,7 @@ contract RCTCrowdfund is Ownable {
     uint256 public startsAt;                               // Crowdfund starting time (Epoch format)
     uint256 public endsAt;                                 // Crowdfund ending time (Epoch format)
 
-    RCToken public token;                                  // Instance of the RCT token contract
+    RCToken public RCT;                                  // Instance of the RCT token contract
 
 /*----------------- Events -----------------*/
 
@@ -56,7 +56,7 @@ contract RCTCrowdfund is Ownable {
         startsAt     = 1506873600;                        // Dec 11th 2017, 18:00, GMT+8
         endsAt       = 1515578400;                        // Jan 10th 2018, 18:00, GMT+8
         tokenAddress = _tokenAddress;                     // RCT token Address
-        token        = RCToken(tokenAddress);
+        RCT          = RCToken(tokenAddress);
     }
 
     // -------------------------------------------------
@@ -71,7 +71,7 @@ contract RCTCrowdfund is Ownable {
     // Opens the crowdfunding
     // -------------------------------------------------
     function openCrowdfund() external onlyOwner returns (bool success) {
-        token.startCrowdfund();
+        RCT.startCrowdfund();
         return true;
     }
 
@@ -84,11 +84,11 @@ contract RCTCrowdfund is Ownable {
         uint256 tokens;
         uint price = 1000;
 
-        if (token.isPreSaleStage()) price = 1100;          // 10% discount for pre-sale
+        if (RCT.isPreSaleStage()) price = 1100;           // 10% discount for pre-sale
         tokens = weiAmount * price;
         weiRaised = weiRaised.add(weiAmount);
         wallet.transfer(weiAmount);
-        if (!token.transferFromCrowdfund(_to, tokens)) revert();
+        if (!RCT.transferFromCrowdfund(_to, tokens)) revert();
         TokenPurchase(_to, weiAmount, tokens);
     }
 
@@ -97,7 +97,7 @@ contract RCTCrowdfund is Ownable {
     // -------------------------------------------------
     function closeCrowdfund() external notBeforeCrowdfundEnds onlyOwner returns (bool success) {
         AmountRaised(wallet, weiRaised);
-        token.finalizeCrowdfund();
+        RCT.finalizeCrowdfund();
         return true;
     }
 
