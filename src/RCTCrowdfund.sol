@@ -36,7 +36,7 @@ contract RCTCrowdfund is Ownable {
     }
 
     modifier crowdfundIsActive() {                         // Ensures the crowdfund is ongoing
-        assert(now >= startsAt && now <= endsAt);
+        require(now >= startsAt && now <= endsAt);
         _;
     }
 

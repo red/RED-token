@@ -77,7 +77,7 @@ contract RCToken is ERC20, Ownable {
     }
 
     modifier checkRedTeamLockingPeriod() {                 // Ensures locking period is over
-        assert(now >= redTeamLockingPeriod);
+        require(now >= redTeamLockingPeriod);
         _;
     }
 
@@ -168,7 +168,7 @@ contract RCToken is ERC20, Ownable {
     // Opens pre-sales
     // -------------------------------------------------
     function startCrowdfund() external onlyOwner notBeforeCrowdfundStarts returns(bool) {
-        assert(stage == icoStages.Ready);
+        require(stage == icoStages.Ready);
         stage = icoStages.PreSale;
     }
 
