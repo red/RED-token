@@ -170,6 +170,7 @@ contract RCToken is ERC20, Ownable {
     function startCrowdfund() external onlyOwner notBeforeCrowdfundStarts returns(bool) {
         require(stage == icoStages.Ready);
         stage = icoStages.PreSale;
+        return(true);
     }
 
     // -------------------------------------------------
