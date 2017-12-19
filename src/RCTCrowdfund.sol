@@ -5,7 +5,7 @@ import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./RCToken.sol";
 
 contract RCTCrowdfund is Ownable {
-    
+
     using SafeMath for uint;
 
     address public tokenAddress;                           // Address of the deployed RCT token contract
@@ -16,7 +16,7 @@ contract RCTCrowdfund is Ownable {
     uint256 public endsAt;                                 // Crowdfund ending time (Epoch format)
 
     RCToken public token;                                  // Instance of the RCT token contract
-    
+
 /*----------------- Events -----------------*/
 
     event WalletAddressChanged(address _wallet);           // Triggered upon owner changing the wallet address
@@ -47,8 +47,8 @@ contract RCTCrowdfund is Ownable {
 
 
 /*----------------- Crowdfunding API -----------------*/
-    
-    // -------------------------------------------------    
+
+    // -------------------------------------------------
     // Contract's constructor
     // -------------------------------------------------
     function RCTCrowdfund(address _tokenAddress) public {
@@ -61,12 +61,12 @@ contract RCTCrowdfund is Ownable {
 
     // -------------------------------------------------
     // Changes main contribution wallet
-    // -------------------------------------------------    
+    // -------------------------------------------------
     function changeWalletAddress(address _wallet) public onlyOwner {
         wallet = _wallet;
         WalletAddressChanged(_wallet);
     }
-    
+
     // -------------------------------------------------
     // Opens the crowdfunding
     // -------------------------------------------------
@@ -76,14 +76,14 @@ contract RCTCrowdfund is Ownable {
     }
 
     // -------------------------------------------------
-    // Function to buy RCT. One can also buy RCT by calling this function directly and send 
+    // Function to buy RCT. One can also buy RCT by calling this function directly and send
     // it to another destination.
     // -------------------------------------------------
     function buyTokens(address _to) public crowdfundIsActive nonZeroAddress(_to) nonZeroValue payable {
         uint256 weiAmount = msg.value;
         uint256 tokens;
         uint price = 1000;
-        
+
         if (token.isPreSaleStage()) price = 1100;          // 10% discount for pre-sale
         tokens = weiAmount * price;
         weiRaised = weiRaised.add(weiAmount);
@@ -91,7 +91,7 @@ contract RCTCrowdfund is Ownable {
         if (!token.transferFromCrowdfund(_to, tokens)) revert();
         TokenPurchase(_to, weiAmount, tokens);
     }
-    
+
     // -------------------------------------------------
     // Closes the crowdfunding. Any unsold RCT will go back to the foundation.
     // -------------------------------------------------

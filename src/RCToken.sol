@@ -14,19 +14,19 @@ contract RCToken is ERC20, Ownable {
     string public constant symbol = "RCT";
 
     uint8 public decimals = 18;                            // (ERC20 API) Decimal precision, factor is 1e18
-    
+
     mapping (address => uint256) accounts;                 // User's accounts table
     mapping (address => mapping (address => uint256)) allowed; // User's allowances table
 
 /*----------------- ICO Information -----------------*/
-    
+
     uint256 public presaleSupply;                          // Pre-sale supply
     uint256 public publicSupply;                           // Total supply for the ICO
     uint256 public foundationSupply;                       // Red Foundation/Community supply
     uint256 public redTeamSupply;                          // Red team supply
     uint256 public bizDevSupply;                           // Business development supply
 
-    uint256 public presaleAmountRemaining;                 // Amount of presale tokens remaining at a given time    
+    uint256 public presaleAmountRemaining;                 // Amount of presale tokens remaining at a given time
     uint256 public icoStartsAt;                              // Crowdsale ending timestamp
     uint256 public icoEndsAt;                              // Crowdsale ending timestamp
     uint256 public redTeamLockingPeriod;                   // Locking period for Red team's supply
@@ -35,7 +35,7 @@ contract RCToken is ERC20, Ownable {
     address public redTeamAddress;                         // Red team address
     address public foundationAddress;                      // Foundation address
     address public bizDevAddress;                          // Business development address
-    
+
     enum icoStages {
         Ready,                                             // Initial state on contract's creation
         PreSale,                                           // Presale state
@@ -65,7 +65,7 @@ contract RCToken is ERC20, Ownable {
         require(msg.value > 0);
         _;
     }
-    
+
     modifier notBeforeCrowdfundStarts(){                   // Ensures actions can only happen after crowdfund ends
         require((now >= icoStartsAt) && (now < icoEndsAt));
         _;
@@ -134,7 +134,7 @@ contract RCToken is ERC20, Ownable {
     function balanceOf(address _owner) public constant returns (uint256 balance) {
         return accounts[_owner];
     }
-    
+
 
 /*----------------- Token API -----------------*/
 
@@ -143,27 +143,27 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     function RCToken() public {
         totalSupply      = 200000000 * 1e18;               // 100% - 200 million total RCT with 18 decimals
-        
+
         presaleSupply    =  20000000 * 1e18;               //  10% -  20 million RCT for pre-crowdsale
         publicSupply     = 100000000 * 1e18;               //  50% - 100 million RCT for the public crowdsale
         redTeamSupply    =  20000000 * 1e18;               //  10% -  20 million RCT for Red team
         foundationSupply =  40000000 * 1e18;               //  20% -  40 million RCT for foundation/incentivising efforts
         bizDevSupply     =  20000000 * 1e18;               //  10% -  20 million RCT for covering business development expenses
-       
+
         presaleAmountRemaining = presaleSupply;            // Decreased over the course of the pre-sale
         redTeamAddress    = 0x123;                         // Red Team address
         foundationAddress = 0x123;                         // Foundation/Community address
         bizDevAddress     = 0x123;                         // Business development address
-        
+
         icoStartsAt       = 1506873600;                    // Dec 11th 2017, 18:00, GMT+8
         icoEndsAt         = 1515578400;                    // Jan 10th 2018, 18:00, GMT+8
         redTeamLockingPeriod = icoEndsAt.add(365 * 1 days); // 12 months locking period
 
         addToBalance(foundationAddress, foundationSupply);
-        
+
         stage = icoStages.Ready;                 // Initializes state
     }
-    
+
     // -------------------------------------------------
     // Opens pre-sales
     // -------------------------------------------------
@@ -171,21 +171,21 @@ contract RCToken is ERC20, Ownable {
         assert(stage == icoStages.Ready);
         stage = icoStages.PreSale;
     }
-    
+
     // -------------------------------------------------
     // Returns TRUE if pre-sale is currently going on
     // -------------------------------------------------
     function isPreSaleStage() external view onlyOwner returns(bool) {
         return (stage == icoStages.PreSale);
     }
-    
+
     // -------------------------------------------------
     // Sets the crowdfund address, can only be done once
     // -------------------------------------------------
     function setCrowdfundAddress(address _crowdfundAddress) external onlyOwner nonZeroAddress(_crowdfundAddress) {
         require(crowdfundAddress == 0x0);
         crowdfundAddress = _crowdfundAddress;
-        addToBalance(crowdfundAddress, publicSupply); 
+        addToBalance(crowdfundAddress, publicSupply);
     }
 
     // -------------------------------------------------
@@ -245,11 +245,11 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     function deliverPresaleRCTaccounts(address[] _batchOfAddresses, uint[] _amountOfRCT) external onlyOwner returns (bool success) {
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            deliverPresaleRCTBalance(_batchOfAddresses[i], _amountOfRCT[i]);            
+            deliverPresaleRCTBalance(_batchOfAddresses[i], _amountOfRCT[i]);
         }
         return true;
     }
-    
+
 /*----------------- Helper functions -----------------*/
 
     // -------------------------------------------------
@@ -260,7 +260,7 @@ contract RCToken is ERC20, Ownable {
         require(presaleAmountRemaining > 0);
         addToBalance(_accountHolder, _amountOfBoughtRCT);
         Transfer(0x0, _accountHolder, _amountOfBoughtRCT);
-        presaleAmountRemaining = presaleAmountRemaining.sub(_amountOfBoughtRCT);    
+        presaleAmountRemaining = presaleAmountRemaining.sub(_amountOfBoughtRCT);
     }
 
     // -------------------------------------------------
