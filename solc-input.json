@@ -1,0 +1,38 @@
+{
+  "language": "Solidity",
+  "settings": {
+    "remappings": [
+      "node_modules/=../node_modules/"
+    ],
+    "outputSelection": {
+      "RCToken.sol": {
+        "*": [
+          "metadata",
+          "abi",
+          "evm.bytecode",
+          "evm.sourceMap"
+        ]
+      },
+      "RCTCrowdfund.sol": {
+        "*": [
+          "metadata",
+          "abi",
+          "evm.bytecode",
+          "evm.sourceMap"
+        ]
+      }
+    }
+  },
+  "sources": {
+    "RCToken.sol": {
+      "urls": [
+        "RCToken.sol"
+      ]
+    },
+    "RCTCrowdfund.sol": {
+      "urls": [
+        "RCTCrowdfund.sol"
+      ]
+    }
+  }
+}
