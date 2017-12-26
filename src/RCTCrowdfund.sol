@@ -84,11 +84,11 @@ contract RCTCrowdfund is Ownable {
         uint256 tokens;
         uint price = 1000;
 
-        if (RCT.isPreSaleStage()) price = 1100;           // 10% discount for pre-sale
+        if (RCT.isPreSaleStage()) {price = 1100;}           // 10% discount for pre-sale
         tokens = weiAmount * price;
         weiRaised = weiRaised.add(weiAmount);
         wallet.transfer(weiAmount);
-        if (!RCT.transferFromCrowdfund(_to, tokens)) revert();
+        if (!RCT.transferFromCrowdfund(_to, tokens)) {revert();}
         TokenPurchase(_to, weiAmount, tokens);
     }
 

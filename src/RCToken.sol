@@ -176,7 +176,7 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Returns TRUE if pre-sale is currently going on
     // -------------------------------------------------
-    function isPreSaleStage() external view onlyOwner returns(bool) {
+    function isPreSaleStage() external view returns(bool) {
         return (stage == icoStages.PreSale);
     }
 
