@@ -12,9 +12,9 @@ const {
 const solcInput = require('../solc-input.json')
 const deploy = require('./deploy')
 
-describe('RCT', function () {
+describe('Contract', function () {
     let provider, web3, snaps
-    let accounts, DEPLOYER, INVESTOR, rct
+    let accounts, DEPLOYER, INVESTOR, rct, rctCrowdfund
 
     before(async () => {
         // Instantiate clients to an empty in-memory blockchain
@@ -28,7 +28,7 @@ describe('RCT', function () {
         ] = accounts = await web3.eth.getAccounts()
 
         // Deploy contracts
-        ;({rct} = await deploy.base(web3, solcJSON(solcInput), DEPLOYER))
+        ;({rct, rctCrowdfund} = await deploy.base(web3, solcJSON(solcInput), DEPLOYER))
     })
 
     beforeEach(async () => {
@@ -39,8 +39,22 @@ describe('RCT', function () {
         await web3.evm.revert(snaps.pop())
     })
 
-    it('is deployed', async () => {
-        let symbol = (await rct.methods.symbol().call())
-        expect(symbol).equal('RCT')
+    describe('RCT', () => {
+        it('is deployed', async () => {
+            let symbol = (await rct.methods.symbol().call())
+            expect(symbol).equal('RCT')
+        })
+    })
+
+    describe('RCTCrowdfund', () => {
+        it('is deployed', async () => {
+            let token = (await rctCrowdfund.methods.RCT().call())
+            expect(token).equal(rct.options.address)
+        })
+
+        it('can open', async () => {
+            await send(rctCrowdfund, DEPLOYER, 'openCrowdfund')
+            expect(await rct.methods.isPreSaleStage().call()).equal(true)
+        })
     })
 })
