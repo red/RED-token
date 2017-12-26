@@ -52,7 +52,7 @@ describe('Contract', function () {
             expect(token).equal(rct.options.address)
         })
 
-        it('can open', async () => {
+        it('can open sale', async () => {
             await send(rctCrowdfund, DEPLOYER, 'openCrowdfund')
             expect(await rct.methods.isPreSaleStage().call()).equal(true)
         })

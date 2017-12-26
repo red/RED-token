@@ -1,3 +1,5 @@
+const {send} = require('./helpers')
+
 const base = async (web3, solcOutput, DEPLOYER) => {
     const {
         RCToken,
@@ -13,6 +15,8 @@ const base = async (web3, solcOutput, DEPLOYER) => {
 
     const rct = await deploy(RCToken)
     const rctCrowdfund = await deploy(RCTCrowdfund, rct.options.address)
+
+    await send(rct, DEPLOYER, 'setCrowdfundAddress', rctCrowdfund.options.address)
 
     return {rct, rctCrowdfund}
 }
