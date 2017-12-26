@@ -31,3 +31,8 @@ Compile with
 ```bash
 yarn build
 ```
+
+Run test suite continuously:
+```bash
+yarn test --watch
+```
