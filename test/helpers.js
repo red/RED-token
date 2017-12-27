@@ -1,6 +1,6 @@
 const {Assertion, expect} = chai = require('chai')
 const Web3 = require('web3')
-const {BN, toBN, padLeft} = require('web3-utils')
+const {BN, toBN, padLeft, toWei, fromWei} = require('web3-utils')
 const Ganache = require("ganache-core")
 const solc = require('solc')
 const path = require('path')
@@ -85,6 +85,10 @@ const ganacheWeb3 = () => {
 const logAccounts = (accounts) => {
     [
         DEPLOYER,
+        WALLET,
+        TEAM,
+        FOUNDATION,
+        BIZ,
         INVESTOR
     ] = accounts
     console.log(`
@@ -95,6 +99,9 @@ const logAccounts = (accounts) => {
 const send = async (contract, sender, method, ...params) =>
     contract.methods[method](...params).send({from: sender})
 
+const buy = async (web3, _from, _to, _value) =>
+    web3.eth.sendTransaction({from: _from, to: _to.options.address, value: toWei(_value, 'ether')})
+
 module.exports = {
     expect,
     assertContractThrows,
@@ -102,8 +109,10 @@ module.exports = {
     ZERO_ADDR: padLeft(0x0, 40),
     BN,
     toBN,
+    toWei,
     solcJSON,
     ganacheWeb3,
     logAccounts,
-    send
+    send,
+    buy
 }

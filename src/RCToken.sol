@@ -27,7 +27,7 @@ contract RCToken is ERC20, Ownable {
     uint256 public bizDevSupply;                           // Business development supply
 
     uint256 public presaleAmountRemaining;                 // Amount of presale tokens remaining at a given time
-    uint256 public icoStartsAt;                              // Crowdsale ending timestamp
+    uint256 public icoStartsAt;                            // Crowdsale ending timestamp
     uint256 public icoEndsAt;                              // Crowdsale ending timestamp
     uint256 public redTeamLockingPeriod;                   // Locking period for Red team's supply
 
@@ -112,7 +112,7 @@ contract RCToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Approves another address a certain amount of FUEL
+    // Approves another address a certain amount of RCT
     // -------------------------------------------------
     function approve(address _spender, uint256 _value) public returns (bool success) {
         require((_value == 0) || (allowance(msg.sender, _spender) == 0));
@@ -122,14 +122,14 @@ contract RCToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Gets an address's FUEL allowance
+    // Gets an address's RCT allowance
     // -------------------------------------------------
     function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
 
     // -------------------------------------------------
-    // Gets the FUEL balance of any address
+    // Gets the RCT balance of any address
     // -------------------------------------------------
     function balanceOf(address _owner) public constant returns (uint256 balance) {
         return accounts[_owner];
@@ -141,22 +141,22 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Contract's constructor
     // -------------------------------------------------
-    function RCToken() public {
-        totalSupply      = 200000000 * 1e18;               // 100% - 200 million total RCT with 18 decimals
+    function RCToken(address team, address foundation, address biz) public {
+        totalSupply      = 200000000 * 1e18;                // 100% - 200 million total RCT with 18 decimals
 
-        presaleSupply    =  20000000 * 1e18;               //  10% -  20 million RCT for pre-crowdsale
-        publicSupply     = 100000000 * 1e18;               //  50% - 100 million RCT for the public crowdsale
-        redTeamSupply    =  20000000 * 1e18;               //  10% -  20 million RCT for Red team
-        foundationSupply =  40000000 * 1e18;               //  20% -  40 million RCT for foundation/incentivising efforts
-        bizDevSupply     =  20000000 * 1e18;               //  10% -  20 million RCT for covering business development expenses
+        presaleSupply    =  20000000 * 1e18;                //  10% -  20 million RCT for pre-crowdsale
+        publicSupply     = 100000000 * 1e18;                //  50% - 100 million RCT for the public crowdsale
+        redTeamSupply    =  20000000 * 1e18;                //  10% -  20 million RCT for Red team
+        foundationSupply =  40000000 * 1e18;                //  20% -  40 million RCT for foundation/incentivising efforts
+        bizDevSupply     =  20000000 * 1e18;                //  10% -  20 million RCT for covering business development expenses
 
-        presaleAmountRemaining = presaleSupply;            // Decreased over the course of the pre-sale
-        redTeamAddress    = 0x123;                         // Red Team address
-        foundationAddress = 0x123;                         // Foundation/Community address
-        bizDevAddress     = 0x123;                         // Business development address
+        presaleAmountRemaining = presaleSupply;             // Decreased over the course of the pre-sale
+        redTeamAddress    = team;                           // Red Team address
+        foundationAddress = foundation;                     // Foundation/Community address
+        bizDevAddress     = biz;                            // Business development address
 
-        icoStartsAt       = 1506873600;                    // Dec 11th 2017, 18:00, GMT+8
-        icoEndsAt         = 1515578400;                    // Jan 10th 2018, 18:00, GMT+8
+        icoStartsAt       = 1506873600;                     // Dec 11th 2017, 18:00, GMT+8
+        icoEndsAt         = 1515578400;                     // Jan 10th 2018, 18:00, GMT+8
         redTeamLockingPeriod = icoEndsAt.add(365 * 1 days); // 12 months locking period
 
         addToBalance(foundationAddress, foundationSupply);
@@ -277,4 +277,13 @@ contract RCToken is ERC20, Ownable {
     function decrementBalance(address _address, uint _amount) internal {
         accounts[_address] = accounts[_address].sub(_amount);
     }
+
+/*-------------- For testing ------------------------*/
+    function setPeriod(uint openTime) public onlyCrowdfund {
+        icoStartsAt = openTime;
+        icoEndsAt = openTime.add(20 seconds);
+        redTeamLockingPeriod = icoEndsAt.add(10 seconds);
+    }
+
 }
+

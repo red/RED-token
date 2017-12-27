@@ -110,4 +110,11 @@ contract RCTCrowdfund is Ownable {
     function () public payable {
         buyTokens(msg.sender);
     }
+
+/*-------------- For testing ------------------------*/
+    function setICOPeriod(uint openTime) public onlyOwner {
+        startsAt = openTime;
+        endsAt = openTime.add(20 seconds);
+        RCT.setPeriod(openTime);
+    }
 }
