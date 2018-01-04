@@ -89,7 +89,9 @@ const logAccounts = (accounts) => {
         TEAM,
         FOUNDATION,
         BIZ,
-        INVESTOR
+        INVESTOR1,
+        INVESTOR2,
+        INVESTOR3
     ] = accounts
     console.log(`
             DEPLOYER:   ${DEPLOYER}

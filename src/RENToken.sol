@@ -20,6 +20,7 @@ contract RENToken is ERC20, Ownable {
 
 /*----------------- ICO Information -----------------*/
 
+    uint256 public angelSupply;                            // angel sale supply
     uint256 public privateEquitySupply;                    // Private equity supply
     uint256 public publicSupply;                           // Total supply for the ICO
     uint256 public foundationSupply;                       // Red Foundation/Community supply

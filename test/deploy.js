@@ -1,14 +1,17 @@
 const {send} = require('./helpers')
 
 const base = async (web3, solcOutput, accounts) => {
-    let DEPLOYER, WALLET, TEAM, FOUNDATION, BIZ, INVESTOR
+    let DEPLOYER, WALLET, TEAM, FOUNDATION, BIZ
+    let INVESTOR1, INVESTOR2, INVESTOR3
     ;[
         DEPLOYER,
         WALLET,
         TEAM,
         FOUNDATION,
         BIZ,
-        INVESTOR
+        INVESTOR1,
+        INVESTOR2,
+        INVESTOR3
     ] = accounts
 
     const {
