@@ -4,14 +4,14 @@ import "../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
 
-contract RCToken is ERC20, Ownable {
+contract RENtoken is ERC20, Ownable {
 
     using SafeMath for uint;
 
 /*----------------- Token Information -----------------*/
 
-    string public constant name = "Red Community Token";
-    string public constant symbol = "RCT";
+    string public constant name = "Red Exchange Note";
+    string public constant symbol = "REN";
 
     uint8 public decimals = 18;                            // (ERC20 API) Decimal precision, factor is 1e18
 
@@ -112,7 +112,7 @@ contract RCToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Approves another address a certain amount of RCT
+    // Approves another address a certain amount of REN
     // -------------------------------------------------
     function approve(address _spender, uint256 _value) public returns (bool success) {
         require((_value == 0) || (allowance(msg.sender, _spender) == 0));
@@ -122,14 +122,14 @@ contract RCToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Gets an address's RCT allowance
+    // Gets an address's REN allowance
     // -------------------------------------------------
     function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
 
     // -------------------------------------------------
-    // Gets the RCT balance of any address
+    // Gets the REN balance of any address
     // -------------------------------------------------
     function balanceOf(address _owner) public constant returns (uint256 balance) {
         return accounts[_owner];
@@ -141,14 +141,14 @@ contract RCToken is ERC20, Ownable {
     // -------------------------------------------------
     // Contract's constructor
     // -------------------------------------------------
-    function RCToken(address team, address foundation, address biz) public {
-        totalSupply      = 200000000 * 1e18;                // 100% - 200 million total RCT with 18 decimals
+    function RENtoken(address team, address foundation, address biz) public {
+        totalSupply      = 200000000 * 1e18;                // 100% - 200 million total REN with 18 decimals
 
-        presaleSupply    =  20000000 * 1e18;                //  10% -  20 million RCT for pre-crowdsale
-        publicSupply     = 100000000 * 1e18;                //  50% - 100 million RCT for the public crowdsale
-        redTeamSupply    =  20000000 * 1e18;                //  10% -  20 million RCT for Red team
-        foundationSupply =  40000000 * 1e18;                //  20% -  40 million RCT for foundation/incentivising efforts
-        bizDevSupply     =  20000000 * 1e18;                //  10% -  20 million RCT for covering business development expenses
+        presaleSupply    =  20000000 * 1e18;                //  10% -  20 million REN for pre-crowdsale
+        publicSupply     = 100000000 * 1e18;                //  50% - 100 million REN for the public crowdsale
+        redTeamSupply    =  20000000 * 1e18;                //  10% -  20 million REN for Red team
+        foundationSupply =  40000000 * 1e18;                //  20% -  40 million REN for foundation/incentivising efforts
+        bizDevSupply     =  20000000 * 1e18;                //  10% -  20 million REN for covering business development expenses
 
         presaleAmountRemaining = presaleSupply;             // Decreased over the course of the pre-sale
         redTeamAddress    = team;                           // Red Team address
@@ -212,7 +212,7 @@ contract RCToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Finalizes presale. If some RCT are left, let them overflow to the crowdfund
+    // Finalizes presale. If some REN are left, let them overflow to the crowdfund
     // -------------------------------------------------
     function finalizePresale() external onlyOwner returns (bool success) {
         require(stage == icoStages.PreSale);
@@ -227,7 +227,7 @@ contract RCToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Finalizes crowdfund. If there are leftover RCT, let them overflow to foundation
+    // Finalizes crowdfund. If there are leftover REN, let them overflow to foundation
     // -------------------------------------------------
     function finalizeCrowdfund() external onlyCrowdfund {
         require(stage == icoStages.PublicSale);
@@ -242,11 +242,11 @@ contract RCToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Function to send RCT to presale investors
+    // Function to send REN to presale investors
     // -------------------------------------------------
-    function deliverPresaleRCTaccounts(address[] _batchOfAddresses, uint[] _amountOfRCT) external onlyOwner returns (bool success) {
+    function deliverPresaleRENaccounts(address[] _batchOfAddresses, uint[] _amountOfREN) external onlyOwner returns (bool success) {
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            deliverPresaleRCTBalance(_batchOfAddresses[i], _amountOfRCT[i]);
+            deliverPresaleRENBalance(_batchOfAddresses[i], _amountOfREN[i]);
         }
         return true;
     }
@@ -257,11 +257,11 @@ contract RCToken is ERC20, Ownable {
     // All presale purchases will be delivered. If one address has contributed more than once,
     // the contributions will be aggregated
     // -------------------------------------------------
-    function deliverPresaleRCTBalance(address _accountHolder, uint _amountOfBoughtRCT) internal onlyOwner {
+    function deliverPresaleRENBalance(address _accountHolder, uint _amountOfBoughtREN) internal onlyOwner {
         require(presaleAmountRemaining > 0);
-        addToBalance(_accountHolder, _amountOfBoughtRCT);
-        Transfer(0x0, _accountHolder, _amountOfBoughtRCT);
-        presaleAmountRemaining = presaleAmountRemaining.sub(_amountOfBoughtRCT);
+        addToBalance(_accountHolder, _amountOfBoughtREN);
+        Transfer(0x0, _accountHolder, _amountOfBoughtREN);
+        presaleAmountRemaining = presaleAmountRemaining.sub(_amountOfBoughtREN);
     }
 
     // -------------------------------------------------

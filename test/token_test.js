@@ -17,7 +17,7 @@ const deploy = require('./deploy')
 describe('Contract', function () {
     let provider, web3, snaps
     let accounts, DEPLOYER, WALLET, TEAM, FOUNDATION, BIZ, INVESTOR
-    let rct, rctCrowdfund
+    let ren, renCrowdfund
 
     before(async () => {
         // Instantiate clients to an empty in-memory blockchain
@@ -35,7 +35,7 @@ describe('Contract', function () {
         ] = accounts = await web3.eth.getAccounts()
 
         // Deploy contracts
-        ;({rct, rctCrowdfund} = await deploy.base(web3, solcJSON(solcInput), accounts))
+        ;({ren, renCrowdfund} = await deploy.base(web3, solcJSON(solcInput), accounts))
     })
 
     beforeEach(async () => {
@@ -46,26 +46,26 @@ describe('Contract', function () {
         await web3.evm.revert(snaps.pop())
     })
 
-    describe('RCT', () => {
+    describe('REN', () => {
         it('is deployed', async () => {
-            let symbol = (await rct.methods.symbol().call())
-            expect(symbol).equal('RCT')
+            let symbol = (await ren.methods.symbol().call())
+            expect(symbol).equal('REN')
         })
     })
 
-    describe('RCTCrowdfund presale', () => {
+    describe('RENCrowdfund presale', () => {
         it('is deployed', async () => {
-            let token = (await rctCrowdfund.methods.RCT().call())
-            expect(token).equal(rct.options.address)
+            let token = (await renCrowdfund.methods.REN().call())
+            expect(token).equal(ren.options.address)
         })
 
         it('presale is started', async () => {
-            expect(await rct.methods.isPreSaleStage().call()).equal(true)
+            expect(await ren.methods.isPreSaleStage().call()).equal(true)
         })
 
         it('presale buy', async () => {
-            await buy(web3, INVESTOR, rctCrowdfund, '1')
-            expect(await expectBalance(rct, INVESTOR, toWei('1100')))
+            await buy(web3, INVESTOR, renCrowdfund, '1')
+            expect(await expectBalance(ren, INVESTOR, toWei('1100')))
             expect(await web3.eth.getBalance(WALLET)).eq(toWei('101'))
         })
     })

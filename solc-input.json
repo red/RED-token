@@ -5,7 +5,7 @@
       "node_modules/=../node_modules/"
     ],
     "outputSelection": {
-      "RCToken.sol": {
+      "RENtoken.sol": {
         "*": [
           "metadata",
           "abi",
@@ -13,7 +13,7 @@
           "evm.sourceMap"
         ]
       },
-      "RCTCrowdfund.sol": {
+      "RENCrowdfund.sol": {
         "*": [
           "metadata",
           "abi",
@@ -24,14 +24,14 @@
     }
   },
   "sources": {
-    "RCToken.sol": {
+    "RENtoken.sol": {
       "urls": [
-        "RCToken.sol"
+        "RENtoken.sol"
       ]
     },
-    "RCTCrowdfund.sol": {
+    "RENCrowdfund.sol": {
       "urls": [
-        "RCTCrowdfund.sol"
+        "RENCrowdfund.sol"
       ]
     }
   }
