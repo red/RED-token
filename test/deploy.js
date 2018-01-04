@@ -12,7 +12,7 @@ const base = async (web3, solcOutput, accounts) => {
     ] = accounts
 
     const {
-        RENtoken,
+        RENToken,
         RENCrowdfund
     } = Object.assign.apply({}, Object.values(solcOutput.contracts))
 
@@ -23,7 +23,7 @@ const base = async (web3, solcOutput, accounts) => {
             .send()
     }
 
-    const ren = await deploy(RENtoken, TEAM, FOUNDATION, BIZ)
+    const ren = await deploy(RENToken, TEAM, FOUNDATION, BIZ)
     const renCrowdfund = await deploy(RENCrowdfund, ren.options.address)
 
     await send(ren, DEPLOYER, 'setCrowdfundAddress', renCrowdfund.options.address)

@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 import "../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "./RENtoken.sol";
+import "./RENToken.sol";
 
 contract RENCrowdfund is Ownable {
 
@@ -15,7 +15,7 @@ contract RENCrowdfund is Ownable {
     uint256 public startsAt;                               // Crowdfund starting time (Epoch format)
     uint256 public endsAt;                                 // Crowdfund ending time (Epoch format)
 
-    RENtoken public REN;                                  // Instance of the REN token contract
+    RENToken public REN;                                  // Instance of the REN token contract
 
 /*----------------- Events -----------------*/
 
@@ -56,7 +56,7 @@ contract RENCrowdfund is Ownable {
         startsAt     = 1506873600;                        // Dec 11th 2017, 18:00, GMT+8
         endsAt       = 1515578400;                        // Jan 10th 2018, 18:00, GMT+8
         tokenAddress = _tokenAddress;                     // REN token Address
-        REN          = RENtoken(tokenAddress);
+        REN          = RENToken(tokenAddress);
     }
 
     // -------------------------------------------------

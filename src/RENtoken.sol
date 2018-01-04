@@ -4,7 +4,7 @@ import "../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
 
-contract RENtoken is ERC20, Ownable {
+contract RENToken is ERC20, Ownable {
 
     using SafeMath for uint;
 
@@ -141,7 +141,7 @@ contract RENtoken is ERC20, Ownable {
     // -------------------------------------------------
     // Contract's constructor
     // -------------------------------------------------
-    function RENtoken(address team, address foundation, address biz) public {
+    function RENToken(address team, address foundation, address biz) public {
         totalSupply      = 200000000 * 1e18;                // 100% - 200 million total REN with 18 decimals
 
         presaleSupply    =  20000000 * 1e18;                //  10% -  20 million REN for pre-crowdsale

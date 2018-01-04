@@ -5,7 +5,7 @@
       "node_modules/=../node_modules/"
     ],
     "outputSelection": {
-      "RENtoken.sol": {
+      "RENToken.sol": {
         "*": [
           "metadata",
           "abi",
@@ -24,9 +24,9 @@
     }
   },
   "sources": {
-    "RENtoken.sol": {
+    "RENToken.sol": {
       "urls": [
-        "RENtoken.sol"
+        "RENToken.sol"
       ]
     },
     "RENCrowdfund.sol": {
