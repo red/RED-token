@@ -53,8 +53,8 @@ contract RENCrowdfund is Ownable {
     // -------------------------------------------------
     function RENCrowdfund(address _tokenAddress) public {
         wallet       = 0x123;                             // ICO wallet address
-        startsAt     = 1506873600;                        // Dec 11th 2017, 18:00, GMT+8
-        endsAt       = 1515578400;                        // Jan 10th 2018, 18:00, GMT+8
+        startsAt     = 1515405600;                        // Jan 8th 2018, 18:00, GMT+8
+        endsAt       = 1517479200;                        // Feb 1th 2018, 18:00, GMT+8
         tokenAddress = _tokenAddress;                     // REN token Address
         REN          = RENToken(tokenAddress);
     }
@@ -82,9 +82,9 @@ contract RENCrowdfund is Ownable {
     function buyTokens(address _to) public crowdfundIsActive nonZeroAddress(_to) nonZeroValue payable {
         uint256 weiAmount = msg.value;
         uint256 tokens;
-        uint price = 1000;
+        uint price = 2500;
 
-        if (REN.isPreSaleStage()) {price = 1100;}           // 10% discount for pre-sale
+        if (REN.isPreSaleStage()) {price = 2750;}           // 10% discount for pre-sale
         tokens = weiAmount * price;
         weiRaised = weiRaised.add(weiAmount);
         wallet.transfer(weiAmount);

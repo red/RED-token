@@ -20,11 +20,11 @@ contract RENToken is ERC20, Ownable {
 
 /*----------------- ICO Information -----------------*/
 
-    uint256 public presaleSupply;                          // Pre-sale supply
+    uint256 public privateEquitySupply;                    // Private equity supply
     uint256 public publicSupply;                           // Total supply for the ICO
     uint256 public foundationSupply;                       // Red Foundation/Community supply
     uint256 public redTeamSupply;                          // Red team supply
-    uint256 public bizDevSupply;                           // Business development supply
+    uint256 public marketingSupply;                        // Marketing & strategic supply
 
     uint256 public presaleAmountRemaining;                 // Amount of presale tokens remaining at a given time
     uint256 public icoStartsAt;                            // Crowdsale ending timestamp
@@ -142,26 +142,28 @@ contract RENToken is ERC20, Ownable {
     // Contract's constructor
     // -------------------------------------------------
     function RENToken(address team, address foundation, address biz) public {
-        totalSupply      = 200000000 * 1e18;                // 100% - 200 million total REN with 18 decimals
+        totalSupply         = 200000000 * 1e18;             // 100% - 200 million total REN with 18 decimals
 
-        presaleSupply    =  20000000 * 1e18;                //  10% -  20 million REN for pre-crowdsale
-        publicSupply     = 100000000 * 1e18;                //  50% - 100 million REN for the public crowdsale
-        redTeamSupply    =  20000000 * 1e18;                //  10% -  20 million REN for Red team
-        foundationSupply =  40000000 * 1e18;                //  20% -  40 million REN for foundation/incentivising efforts
-        bizDevSupply     =  20000000 * 1e18;                //  10% -  20 million REN for covering business development expenses
+        angelSupply         =  20000000 * 1e18;             //  10% -  20 million REN for angels sale
+        privateEquitySupply =  48000000 * 1e18;             //  24% -  48 million REN for pre-crowdsale
+        publicSupply        =  12000000 * 1e18;             //   6% -  12 million REN for the public crowdsale
+        redTeamSupply       =  30000000 * 1e18;             //  15% -  30 million REN for Red team
+        foundationSupply    =  70000000 * 1e18;             //  35% -  70 million REN for foundation/incentivising efforts
+        marketingSupply     =  20000000 * 1e18;             //  10% -  20 million REN for covering marketing and strategic expenses
 
-        presaleAmountRemaining = presaleSupply;             // Decreased over the course of the pre-sale
-        redTeamAddress    = team;                           // Red Team address
-        foundationAddress = foundation;                     // Foundation/Community address
-        bizDevAddress     = biz;                            // Business development address
+        presaleAmountRemaining = angelSupply + privateEquitySupply; // Decreased over the course of the pre-sale
+        redTeamAddress      = team;                         // Red Team address
+        foundationAddress   = foundation;                   // Foundation/Community address
+        bizDevAddress       = biz;                          // Business development address
 
-        icoStartsAt       = 1506873600;                     // Dec 11th 2017, 18:00, GMT+8
-        icoEndsAt         = 1515578400;                     // Jan 10th 2018, 18:00, GMT+8
-        redTeamLockingPeriod = icoEndsAt.add(365 * 1 days); // 12 months locking period
+        icoStartsAt          = 1515405600;                  // Jan 8th 2018, 18:00, GMT+8
+        icoEndsAt            = 1517479200;                  // Feb 1th 2018, 18:00, GMT+8
+        //angelLockingPeriod   = icoEndsAt.add(90 days);      //  3 months locking period
+        redTeamLockingPeriod = icoEndsAt.add(365 days);     // 12 months locking period
 
         addToBalance(foundationAddress, foundationSupply);
 
-        stage = icoStages.Ready;                 // Initializes state
+        stage = icoStages.Ready;                            // Initializes state
     }
 
     // -------------------------------------------------
