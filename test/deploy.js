@@ -45,7 +45,7 @@ const base = async (web3, solcOutput, accounts) => {
 
     await send(ren, DEPLOYER, 'setCrowdfundAddress', renCrowdfund.options.address)
     await send(ren, DEPLOYER, 'changeFoundationAddress', FOUNDATION)
-    await send(ren, DEPLOYER, 'changePrivateEquityAddress', BIZ)
+    // await send(ren, DEPLOYER, 'changePrivateEquityAddress', BIZ)
     await send(ren, DEPLOYER, 'changeRedTeamAddress', TEAM)
     await send(renCrowdfund, DEPLOYER, 'changeWalletAddress', WALLET)
 

@@ -38,6 +38,18 @@ async function expectBalance(eip20, account, expectedBalance) {
         .eq(expectedBalance)
 }
 
+async function balance(web3_or_eip20, account) {
+    const eip20 = web3_or_eip20.methods
+    const eth = web3_or_eip20.eth
+    if (eip20) {
+        return eip20.balanceOf(account).call()
+    } else if (eth) {
+        return eth.getBalance(account)
+    } else {
+        throw new Error('Expected a web3 client or an EIP20 web3 contract instead of', web3_or_eip20)
+    }
+}
+
 const readImport = (file) => {
     const fullPath = path.join(__dirname, '..', 'src', file)
     try {
@@ -122,6 +134,7 @@ module.exports = {
     expect,
     assertContractThrows,
     expectBalance,
+    balance,
     ZERO_ADDR: padLeft(0x0, 40),
     BN,
     toBN,

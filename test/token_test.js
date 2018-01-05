@@ -2,6 +2,7 @@ const {
     expect,
     assertContractThrows,
     expectBalance,
+    balance,
     toBN,
     fromWei,
     toWei,
@@ -16,14 +17,14 @@ const solcInput = require('../solc-input.json')
 const deploy = require('./deploy')
 
 describe('Contract', function () {
-    let provider, web3, snaps
+    let web3, snaps
     let accounts, DEPLOYER, WALLET, TEAM, FOUNDATION, BIZ
     let INVESTOR1, INVESTOR2, INVESTOR3
     let ren, renCrowdfund
 
     before(async () => {
         // Instantiate clients to an empty in-memory blockchain
-        web3 = ganacheWeb3(provider)
+        web3 = ganacheWeb3()
         snaps = []
 
         // Provide synchronous access to test accounts
@@ -50,15 +51,30 @@ describe('Contract', function () {
         await web3.evm.revert(snaps.pop())
     })
 
+    describe('Angel round', () => {
+        it('does NOT cost more than 100 USD for the deployer', async () => {
+            // Source: https://coinmarketcap.com/currencies/ethereum/
+            USD_PER_ETH = toBN(1068)
+            const initial = toWei(toBN(100))
+            const current = await balance(web3, DEPLOYER)
+            const spent = initial.sub(toBN(current))
+            const deploymentCost = (fromWei(spent)) * USD_PER_ETH
+            console.log('      Deployment cost:', deploymentCost)
+            expect(deploymentCost).to.be.below(100)
+        })
+    })
+
     describe('Workflow Test', () => {
         it('is token deployed', async () => {
             let symbol = (await ren.methods.symbol().call())
             expect(symbol).equal('REN')
         })
+
         it('is crowdfund deployed', async () => {
             let token = (await renCrowdfund.methods.REN().call())
             expect(token).equal(ren.options.address)
         })
+
         it('workflow', async () => {
             // starts the ICO from now on
             let startsAt = await renCrowdfund.methods.startsAt().call()
@@ -116,7 +132,8 @@ describe('Contract', function () {
             // any buying will fail
             try {
                 await buy(web3, INVESTOR2, renCrowdfund, '1')
-            } catch (e) {}
+            } catch (e) {
+            }
             // 7500 + 2500 = 10,000
             expect(await expectBalance(ren, INVESTOR2, toWei('10000')))
             expect(await web3.eth.getBalance(WALLET)).eq(toWei('105'))
