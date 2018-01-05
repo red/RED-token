@@ -35,7 +35,7 @@ contract RENToken is ERC20, Ownable {
     address public crowdfundAddress;                       // Crowdfunding address
     address public redTeamAddress;                         // Red team address
     address public foundationAddress;                      // Foundation address
-    address public bizDevAddress;                          // Business development address
+    address public privateEquityAddress;                   // Private equity address
 
     enum icoStages {
         Ready,                                             // Initial state on contract's creation
@@ -153,9 +153,9 @@ contract RENToken is ERC20, Ownable {
         marketingSupply     =  20000000 * 1e18;             //  10% -  20 million REN for covering marketing and strategic expenses
 
         presaleAmountRemaining = angelSupply + privateEquitySupply; // Decreased over the course of the pre-sale
-        redTeamAddress      = 0x123;                        // Red Team address
-        foundationAddress   = 0x123;                        // Foundation/Community address
-        bizDevAddress       = 0x123;                        // Business development address
+        redTeamAddress       = 0x123;                       // Red Team address
+        foundationAddress    = 0x123;                       // Foundation/Community address
+        privateEquityAddress = 0x123;                       // Business development address
 
         icoStartsAt          = 1515405600;                  // Jan 8th 2018, 18:00, GMT+8
         icoEndsAt            = 1517479200;                  // Feb 1th 2018, 18:00, GMT+8
@@ -290,7 +290,7 @@ contract RENToken is ERC20, Ownable {
 
 /*-------------- For testing ------------------------*/
 /*-------------- For testing ------------------------*/
-/*------ Remove Those functions when depoly ---------*/
+/*------ Remove Those functions before deploying on mainnet ---------*/
 /*-------------- For testing ------------------------*/
 /*-------------- For testing ------------------------*/
     function setPeriod(uint openTime) public onlyCrowdfund {
@@ -303,8 +303,8 @@ contract RENToken is ERC20, Ownable {
         foundationAddress = _wallet;
     }
 
-    function changeBizDevAddress(address _wallet) public onlyOwner {
-        bizDevAddress = _wallet;
+    function changePrivateEquityAddress(address _wallet) public onlyOwner {
+        privateEquityAddress = _wallet;
     }
 }
 
