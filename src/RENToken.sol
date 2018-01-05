@@ -35,7 +35,7 @@ contract RENToken is ERC20, Ownable {
     address public crowdfundAddress;                       // Crowdfunding contract address
     address public redTeamAddress;                         // Red team address
     address public foundationAddress;                      // Foundation address
-    address public privateEquityAddress;                   // Private equity address
+    address public marketingAddress;                   // Private equity address
 
     enum icoStages {
         Ready,                                             // Initial state on contract's creation
@@ -155,7 +155,7 @@ contract RENToken is ERC20, Ownable {
         presaleAmountRemaining = angelSupply + privateEquitySupply; // Decreased over the course of the pre-sale
         redTeamAddress       = 0x123;                       // Red Team address
         foundationAddress    = 0x123;                       // Foundation/Community address
-        privateEquityAddress = 0x123;                       // Business development address
+        marketingAddress     = 0x123;                       // Marketing/Strategic address
 
         icoStartsAt          = 1515405600;                  // Jan 8th 2018, 18:00, GMT+8
         icoEndsAt            = 1517479200;                  // Feb 1th 2018, 18:00, GMT+8
@@ -303,8 +303,8 @@ contract RENToken is ERC20, Ownable {
         foundationAddress = _wallet;
     }
 
-    function changePrivateEquityAddress(address _wallet) public onlyOwner {
-        privateEquityAddress = _wallet;
+    function changeMarketingAddress(address _wallet) public onlyOwner {
+        marketingAddress = _wallet;
     }
 }
 
