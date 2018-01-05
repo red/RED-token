@@ -5,7 +5,7 @@
       "node_modules/=../node_modules/"
     ],
     "outputSelection": {
-      "RENToken.sol": {
+      "REDToken.sol": {
         "*": [
           "metadata",
           "abi",
@@ -13,7 +13,7 @@
           "evm.sourceMap"
         ]
       },
-      "RENCrowdfund.sol": {
+      "REDCrowdfund.sol": {
         "*": [
           "metadata",
           "abi",
@@ -24,14 +24,14 @@
     }
   },
   "sources": {
-    "RENToken.sol": {
+    "REDToken.sol": {
       "urls": [
-        "RENToken.sol"
+        "REDToken.sol"
       ]
     },
-    "RENCrowdfund.sol": {
+    "REDCrowdfund.sol": {
       "urls": [
-        "RENCrowdfund.sol"
+        "REDCrowdfund.sol"
       ]
     }
   }

@@ -2,21 +2,21 @@ pragma solidity ^0.4.18;
 
 import "../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "./RENToken.sol";
+import "./REDToken.sol";
 
-contract RENCrowdfund is Ownable {
+contract REDCrowdfund is Ownable {
 
     using SafeMath for uint;
 
     bool public isOpen = false;                           // Is the crowd fund open?
-    address public tokenAddress;                          // Address of the deployed REN token contract
+    address public tokenAddress;                          // Address of the deployed RED token contract
     address public wallet;                                // Address of secure wallet to receive crowdfund contributions
 
     uint256 public weiRaised = 0;
     uint256 public startsAt;                              // Crowdfund starting time (Epoch format)
     uint256 public endsAt;                                // Crowdfund ending time (Epoch format)
 
-    RENToken public REN;                                  // Instance of the REN token contract
+    REDToken public RED;                                  // Instance of the RED token contract
 
 /*----------------- Events -----------------*/
 
@@ -52,12 +52,12 @@ contract RENCrowdfund is Ownable {
     // -------------------------------------------------
     // Contract's constructor
     // -------------------------------------------------
-    function RENCrowdfund(address _tokenAddress) public {
+    function REDCrowdfund(address _tokenAddress) public {
         wallet       = 0x123;                              // ICO wallet address
         startsAt     = 1515405600;                         // Jan 8th 2018, 18:00, GMT+8
         endsAt       = 1517479200;                         // Feb 1th 2018, 18:00, GMT+8
-        tokenAddress = _tokenAddress;                      // REN token Address
-        REN          = RENToken(tokenAddress);
+        tokenAddress = _tokenAddress;                      // RED token Address
+        RED          = REDToken(tokenAddress);
     }
 
     // -------------------------------------------------
@@ -73,12 +73,12 @@ contract RENCrowdfund is Ownable {
     // -------------------------------------------------
     function openCrowdfund() external onlyOwner returns (bool success) {
         isOpen = true;
-        REN.startCrowdfund();
+        RED.startCrowdfund();
         return true;
     }
 
     // -------------------------------------------------
-    // Function to buy REN. One can also buy REN by calling this function directly and send
+    // Function to buy RED. One can also buy RED by calling this function directly and send
     // it to another destination.
     // -------------------------------------------------
     function buyTokens(address _to) public crowdfundIsActive nonZeroAddress(_to) nonZeroValue payable {
@@ -86,20 +86,20 @@ contract RENCrowdfund is Ownable {
         uint256 tokens;
         uint price = 2500;
 
-        if (REN.isPreSaleStage()) {price = 2750;}           // 10% discount for pre-sale
+        if (RED.isPreSaleStage()) {price = 2750;}           // 10% discount for pre-sale
         tokens = weiAmount * price;
         weiRaised = weiRaised.add(weiAmount);
         wallet.transfer(weiAmount);
-        if (!REN.transferFromCrowdfund(_to, tokens)) {revert();}
+        if (!RED.transferFromCrowdfund(_to, tokens)) {revert();}
         TokenPurchase(_to, weiAmount, tokens);
     }
 
     // -------------------------------------------------
-    // Closes the crowdfunding. Any unsold REN will go back to the foundation.
+    // Closes the crowdfunding. Any unsold RED will go back to the foundation.
     // -------------------------------------------------
     function closeCrowdfund() external notBeforeCrowdfundEnds onlyOwner returns (bool success) {
         AmountRaised(wallet, weiRaised);
-        REN.finalizeCrowdfund();
+        RED.finalizeCrowdfund();
         isOpen = false;
         return true;
     }

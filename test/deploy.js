@@ -20,8 +20,8 @@ const base = async (web3, solcOutput, accounts) => {
         .forEach((name) => contractRegistry[name].NAME = name)
 
     const {
-        RENToken,
-        RENCrowdfund
+        REDToken,
+        REDCrowdfund
     } = contractRegistry
 
     const deploy = async (Contract, ...arguments) => {
@@ -40,16 +40,16 @@ const base = async (web3, solcOutput, accounts) => {
             })
     }
 
-    const ren = await deploy(RENToken)
-    const renCrowdfund = await deploy(RENCrowdfund, ren.options.address)
+    const red = await deploy(REDToken)
+    const redCrowdfund = await deploy(REDCrowdfund, red.options.address)
 
-    await send(ren, DEPLOYER, 'setCrowdfundAddress', renCrowdfund.options.address)
-    await send(ren, DEPLOYER, 'changeFoundationAddress', FOUNDATION)
-    // await send(ren, DEPLOYER, 'changePrivateEquityAddress', BIZ)
-    await send(ren, DEPLOYER, 'changeRedTeamAddress', TEAM)
-    await send(renCrowdfund, DEPLOYER, 'changeWalletAddress', WALLET)
+    await send(red, DEPLOYER, 'setCrowdfundAddress', redCrowdfund.options.address)
+    await send(red, DEPLOYER, 'changeFoundationAddress', FOUNDATION)
+    await send(red, DEPLOYER, 'changeMarketingAddress', BIZ)
+    await send(red, DEPLOYER, 'changeRedTeamAddress', TEAM)
+    await send(redCrowdfund, DEPLOYER, 'changeWalletAddress', WALLET)
 
-    return {ren, renCrowdfund}
+    return {red, redCrowdfund}
 }
 
 module.exports = {

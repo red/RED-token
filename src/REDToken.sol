@@ -4,14 +4,14 @@ import "../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "../node_modules/zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
 
-contract RENToken is ERC20, Ownable {
+contract REDToken is ERC20, Ownable {
 
     using SafeMath for uint;
 
 /*----------------- Token Information -----------------*/
 
-    string public constant name = "Red Exchange Note";
-    string public constant symbol = "REN";
+    string public constant name = "Red Community Token";
+    string public constant symbol = "RED";
 
     uint8 public decimals = 18;                            // (ERC20 API) Decimal precision, factor is 1e18
 
@@ -43,7 +43,7 @@ contract RENToken is ERC20, Ownable {
         PublicSale,                                        // Public crowdsale state
         Done                                               // Ending state after ICO
     }
-    icoStages stage;                                       // Crowdfunding current state
+    icoStages stage;                                       // Crowdfunding curREDt state
 
 /*----------------- Events -----------------*/
 
@@ -113,7 +113,7 @@ contract RENToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Approves another address a certain amount of REN
+    // Approves another address a certain amount of RED
     // -------------------------------------------------
     function approve(address _spender, uint256 _value) public returns (bool success) {
         require((_value == 0) || (allowance(msg.sender, _spender) == 0));
@@ -123,14 +123,14 @@ contract RENToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Gets an address's REN allowance
+    // Gets an address's RED allowance
     // -------------------------------------------------
     function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
 
     // -------------------------------------------------
-    // Gets the REN balance of any address
+    // Gets the RED balance of any address
     // -------------------------------------------------
     function balanceOf(address _owner) public constant returns (uint256 balance) {
         return accounts[_owner];
@@ -142,20 +142,20 @@ contract RENToken is ERC20, Ownable {
     // -------------------------------------------------
     // Contract's constructor
     // -------------------------------------------------
-    function RENToken() public {
-        totalSupply         = 200000000 * 1e18;             // 100% - 200 million total REN with 18 decimals
+    function REDToken() public {
+        totalSupply         = 200000000 * 1e18;             // 100% - 200 million total RED with 18 decimals
 
-        angelSupply         =  20000000 * 1e18;             //  10% -  20 million REN for angels sale
-        privateEquitySupply =  48000000 * 1e18;             //  24% -  48 million REN for pre-crowdsale
-        publicSupply        =  12000000 * 1e18;             //   6% -  12 million REN for the public crowdsale
-        redTeamSupply       =  30000000 * 1e18;             //  15% -  30 million REN for Red team
-        foundationSupply    =  70000000 * 1e18;             //  35% -  70 million REN for foundation/incentivising efforts
-        marketingSupply     =  20000000 * 1e18;             //  10% -  20 million REN for covering marketing and strategic expenses
+        angelSupply         =  20000000 * 1e18;             //  10% -  20 million RED for angels sale
+        privateEquitySupply =  48000000 * 1e18;             //  24% -  48 million RED for pre-crowdsale
+        publicSupply        =  12000000 * 1e18;             //   6% -  12 million RED for the public crowdsale
+        redTeamSupply       =  30000000 * 1e18;             //  15% -  30 million RED for Red team
+        foundationSupply    =  70000000 * 1e18;             //  35% -  70 million RED for foundation/incentivising efforts
+        marketingSupply     =  20000000 * 1e18;             //  10% -  20 million RED for covering marketing and strategic expenses
 
         presaleAmountRemaining = angelSupply + privateEquitySupply; // Decreased over the course of the pre-sale
-        redTeamAddress       = 0x123;                       // Red Team address
-        foundationAddress    = 0x123;                       // Foundation/Community address
-        marketingAddress     = 0x123;                       // Marketing/Strategic address
+        redTeamAddress       = 0x31aa507c140E012d0DcAf041d482e04F36323B03;       // Red Team address
+        foundationAddress    = 0x93e3AF42939C163Ee4146F63646Fb4C286CDbFeC;       // Foundation/Community address
+        marketingAddress     = 0x0;                       // Marketing/Strategic address
 
         icoStartsAt          = 1515405600;                  // Jan 8th 2018, 18:00, GMT+8
         icoEndsAt            = 1517479200;                  // Feb 1th 2018, 18:00, GMT+8
@@ -163,7 +163,7 @@ contract RENToken is ERC20, Ownable {
         redTeamLockingPeriod = icoEndsAt.add(365 days);     // 12 months locking period
 
         addToBalance(foundationAddress, foundationSupply);
-        addToBalance(marketingAddress, marketingSupply);
+        //addToBalance(marketingAddress, marketingSupply);
 
         stage = icoStages.Ready;                            // Initializes state
     }
@@ -216,7 +216,7 @@ contract RENToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Finalizes presale. If some REN are left, let them overflow to the crowdfund
+    // Finalizes presale. If some RED are left, let them overflow to the crowdfund
     // -------------------------------------------------
     function finalizePresale() external onlyOwner returns (bool success) {
         require(stage == icoStages.PreSale);
@@ -231,7 +231,7 @@ contract RENToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Finalizes crowdfund. If there are leftover REN, let them overflow to foundation
+    // Finalizes crowdfund. If there are leftover RED, let them overflow to foundation
     // -------------------------------------------------
     function finalizeCrowdfund() external onlyCrowdfund {
         require(stage == icoStages.PublicSale);
@@ -246,11 +246,11 @@ contract RENToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Function to send REN to presale investors
+    // Function to send RED to presale investors
     // -------------------------------------------------
-    function deliverPresaleRENaccounts(address[] _batchOfAddresses, uint[] _amountOfREN) external onlyOwner returns (bool success) {
+    function deliverPresaleRedaccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner returns (bool success) {
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            deliverPresaleRENBalance(_batchOfAddresses[i], _amountOfREN[i]);
+            deliverPresaleREDBalance(_batchOfAddresses[i], _amountOfRED[i]);
         }
         return true;
     }
@@ -268,11 +268,11 @@ contract RENToken is ERC20, Ownable {
     // All presale purchases will be delivered. If one address has contributed more than once,
     // the contributions will be aggregated
     // -------------------------------------------------
-    function deliverPresaleRENBalance(address _accountHolder, uint _amountOfBoughtREN) internal onlyOwner {
+    function deliverPresaleREDBalance(address _accountHolder, uint _amountOfBoughtRED) internal onlyOwner {
         require(presaleAmountRemaining > 0);
-        addToBalance(_accountHolder, _amountOfBoughtREN);
-        Transfer(0x0, _accountHolder, _amountOfBoughtREN);
-        presaleAmountRemaining = presaleAmountRemaining.sub(_amountOfBoughtREN);
+        addToBalance(_accountHolder, _amountOfBoughtRED);
+        Transfer(0x0, _accountHolder, _amountOfBoughtRED);
+        presaleAmountRemaining = presaleAmountRemaining.sub(_amountOfBoughtRED);
     }
 
     // -------------------------------------------------

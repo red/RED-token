@@ -20,7 +20,7 @@ describe('Contract', function () {
     let web3, snaps
     let accounts, DEPLOYER, WALLET, TEAM, FOUNDATION, BIZ
     let INVESTOR1, INVESTOR2, INVESTOR3
-    let ren, renCrowdfund
+    let red, redCrowdfund
 
     before(async () => {
         // Instantiate clients to an empty in-memory blockchain
@@ -40,7 +40,7 @@ describe('Contract', function () {
         ] = accounts = await web3.eth.getAccounts()
 
         // Deploy contracts
-        ;({ren, renCrowdfund} = await deploy.base(web3, solcJSON(solcInput), accounts))
+        ;({red, redCrowdfund} = await deploy.base(web3, solcJSON(solcInput), accounts))
     })
 
     beforeEach(async () => {
@@ -66,84 +66,82 @@ describe('Contract', function () {
 
     describe('Workflow Test', () => {
         it('is token deployed', async () => {
-            let symbol = (await ren.methods.symbol().call())
-            expect(symbol).equal('REN')
+            let symbol = (await red.methods.symbol().call())
+            expect(symbol).equal('RED')
         })
-
         it('is crowdfund deployed', async () => {
-            let token = (await renCrowdfund.methods.REN().call())
-            expect(token).equal(ren.options.address)
+            let token = (await redCrowdfund.methods.RED().call())
+            expect(token).equal(red.options.address)
         })
-
         it('workflow', async () => {
             // starts the ICO from now on
-            let startsAt = await renCrowdfund.methods.startsAt().call()
-            //let currentTime = web3.eth.getBlock(web3.eth.blockNumber).timestamp;
+            let startsAt = await redCrowdfund.methods.startsAt().call()
+            //let curredtTime = web3.eth.getBlock(web3.eth.blockNumber).timestamp;
             web3.evm.increaseTime(604800)   // 1 week
 
             // angel round
             let addresses = [INVESTOR1, INVESTOR2, INVESTOR3]
             let amounts = [toWei('1000'), toWei('2000'), toWei('3000')]
-            let success = (await send(ren, DEPLOYER, 'deliverPresaleRENaccounts', addresses, amounts))
-            expect(await expectBalance(ren, INVESTOR1, toWei('1000')))
-            expect(await expectBalance(ren, INVESTOR2, toWei('2000')))
-            expect(await expectBalance(ren, INVESTOR3, toWei('3000')))
+            let success = (await send(red, DEPLOYER, 'deliverPresaleRedaccounts', addresses, amounts))
+            expect(await expectBalance(red, INVESTOR1, toWei('1000')))
+            expect(await expectBalance(red, INVESTOR2, toWei('2000')))
+            expect(await expectBalance(red, INVESTOR3, toWei('3000')))
 
             // buying before presale will fail
             try {
-                await buy(web3, INVESTOR1, renCrowdfund, '1')
+                await buy(web3, INVESTOR1, redCrowdfund, '1')
             } catch (error) {
             }
-            await expectBalance(ren, INVESTOR1, toWei('1000'))
+            await expectBalance(red, INVESTOR1, toWei('1000'))
 
             // open presale
-            await send(renCrowdfund, DEPLOYER, 'openCrowdfund')
+            await send(redCrowdfund, DEPLOYER, 'openCrowdfund')
 
             // presale buy 1
-            // presale price: 1 ETH = 2750 REN
-            await buy(web3, INVESTOR1, renCrowdfund, '1')
+            // presale price: 1 ETH = 2750 red
+            await buy(web3, INVESTOR1, redCrowdfund, '1')
             // 1000 + 2750 = 3750
-            expect(await expectBalance(ren, INVESTOR1, toWei('3750')))
+            expect(await expectBalance(red, INVESTOR1, toWei('3750')))
             expect(await web3.eth.getBalance(WALLET)).eq(toWei('101'))
-            await buy(web3, INVESTOR1, renCrowdfund, '1')
+            await buy(web3, INVESTOR1, redCrowdfund, '1')
             // 3750 + 2750 = 6500
-            expect(await expectBalance(ren, INVESTOR1, toWei('6500')))
+            expect(await expectBalance(red, INVESTOR1, toWei('6500')))
             expect(await web3.eth.getBalance(WALLET)).eq(toWei('102'))
 
             // presale buy 2
-            await buy(web3, INVESTOR2, renCrowdfund, '2')
+            await buy(web3, INVESTOR2, redCrowdfund, '2')
             // 2000 + (2750 * 2) = 7500
-            expect(await expectBalance(ren, INVESTOR2, toWei('7500')))
+            expect(await expectBalance(red, INVESTOR2, toWei('7500')))
             expect(await web3.eth.getBalance(WALLET)).eq(toWei('104'))
 
             // close presale
-            await send(ren, DEPLOYER, 'finalizePresale')
+            await send(red, DEPLOYER, 'finalizePresale')
 
             // Open round buy
-            await buy(web3, INVESTOR2, renCrowdfund, '1')
+            await buy(web3, INVESTOR2, redCrowdfund, '1')
             // 7500 + 2500 = 10,000
-            expect(await expectBalance(ren, INVESTOR2, toWei('10000')))
+            expect(await expectBalance(red, INVESTOR2, toWei('10000')))
             expect(await web3.eth.getBalance(WALLET)).eq(toWei('105'))
 
             // close ICO
             await web3.evm.increaseTime(604800 * 4)
-            await send(renCrowdfund, DEPLOYER, 'closeCrowdfund')
+            await send(redCrowdfund, DEPLOYER, 'closeCrowdfund')
 
             // any buying will fail
             try {
-                await buy(web3, INVESTOR2, renCrowdfund, '1')
+                await buy(web3, INVESTOR2, redCrowdfund, '1')
             } catch (e) {
             }
             // 7500 + 2500 = 10,000
-            expect(await expectBalance(ren, INVESTOR2, toWei('10000')))
+            expect(await expectBalance(red, INVESTOR2, toWei('10000')))
             expect(await web3.eth.getBalance(WALLET)).eq(toWei('105'))
         })
     })
 
     describe('Security Test', () => {
         it('is token deployed', async () => {
-            let symbol = (await ren.methods.symbol().call())
-            expect(symbol).equal('REN')
+            let symbol = (await red.methods.symbol().call())
+            expect(symbol).equal('RED')
         })
 
         /* -- Crowd Fund Contract -- */
@@ -176,7 +174,7 @@ describe('Contract', function () {
         // finalizePresale
 
         // Others except DEPLOYER call this function will fail
-        // deliverPresaleRENaccounts
+        // deliverPresaleredaccounts
 
         // Others except DEPLOYER call this function will fail
         // changeRedTeamAddress
@@ -184,8 +182,8 @@ describe('Contract', function () {
 
     describe('ERC20 API Test', () => {
         it('is token deployed', async () => {
-            let symbol = (await ren.methods.symbol().call())
-            expect(symbol).equal('REN')
+            let symbol = (await red.methods.symbol().call())
+            expect(symbol).equal('RED')
         })
 
         // transfer
