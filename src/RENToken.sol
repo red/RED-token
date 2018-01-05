@@ -189,7 +189,7 @@ contract RENToken is ERC20, Ownable {
     function setCrowdfundAddress(address _crowdfundAddress) external onlyOwner nonZeroAddress(_crowdfundAddress) {
         require(crowdfundAddress == 0x0);
         crowdfundAddress = _crowdfundAddress;
-        addToBalance(crowdfundAddress, publicSupply);
+        addToBalance(crowdfundAddress, presaleAmountRemaining + publicSupply);
     }
 
     // -------------------------------------------------
