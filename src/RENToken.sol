@@ -35,7 +35,7 @@ contract RENToken is ERC20, Ownable {
     address public crowdfundAddress;                       // Crowdfunding contract address
     address public redTeamAddress;                         // Red team address
     address public foundationAddress;                      // Foundation address
-    address public marketingAddress;                   // Private equity address
+    address public marketingAddress;                       // Private equity address
 
     enum icoStages {
         Ready,                                             // Initial state on contract's creation
@@ -163,6 +163,7 @@ contract RENToken is ERC20, Ownable {
         redTeamLockingPeriod = icoEndsAt.add(365 days);     // 12 months locking period
 
         addToBalance(foundationAddress, foundationSupply);
+        addToBalance(marketingAddress, marketingSupply);
 
         stage = icoStages.Ready;                            // Initializes state
     }
