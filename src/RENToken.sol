@@ -174,7 +174,7 @@ contract RENToken is ERC20, Ownable {
     function startCrowdfund() external onlyCrowdfund notBeforeCrowdfundStarts returns(bool) {
         require(stage == icoStages.Ready);
         stage = icoStages.PreSale;
-        return(true);
+        return true;
     }
 
     // -------------------------------------------------
