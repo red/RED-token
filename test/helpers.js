@@ -76,6 +76,10 @@ const ganacheWeb3 = () => {
             call: 'evm_revert',
             params: 1,
             inputFormatter: [web3.utils.numberToHex]
+        }, {
+            name: 'increaseTime',
+            call: 'evm_increaseTime',
+            params: 1
         }]
     })
 
