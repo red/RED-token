@@ -105,8 +105,12 @@ const logAccounts = (accounts) => {
 const send = async (contract, sender, method, ...params) =>
     contract.methods[method](...params).send({from: sender})
 
-const buy = async (web3, _from, _to, _value) =>
-    web3.eth.sendTransaction({from: _from, to: _to.options.address, value: toWei(_value, 'ether')})
+const buy = async (web3, buyer, seller, eth) =>
+    web3.eth.sendTransaction({
+        from: buyer,
+        to: seller.options.address,
+        value: toWei(eth, 'ether')
+    })
 
 module.exports = {
     expect,
