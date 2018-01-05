@@ -59,6 +59,11 @@ describe('Contract', function () {
             expect(token).equal(ren.options.address)
         })
         it('workflow', async () => {
+            // starts the ICO from now on
+            let startsAt = await renCrowdfund.methods.startsAt().call()
+            //let currentTime = web3.eth.getBlock(web3.eth.blockNumber).timestamp;
+            web3.evm.increaseTime(604800)   // 1 week
+
             // angel round
             let addresses = [INVESTOR1, INVESTOR2, INVESTOR3]
             let amounts = [toWei('1000'), toWei('2000'), toWei('3000')]
@@ -98,6 +103,18 @@ describe('Contract', function () {
 
             // Open round buy
             await buy(web3, INVESTOR2, renCrowdfund, '1')
+            // 7500 + 2500 = 10,000
+            expect(await expectBalance(ren, INVESTOR2, toWei('10000')))
+            expect(await web3.eth.getBalance(WALLET)).eq(toWei('105'))
+
+            // close ICO
+            await web3.evm.increaseTime(604800 * 4)
+            await send(renCrowdfund, DEPLOYER, 'closeCrowdfund')
+
+            // any buying will fail
+            try {
+                await buy(web3, INVESTOR2, renCrowdfund, '1')
+            } catch (e) {}
             // 7500 + 2500 = 10,000
             expect(await expectBalance(ren, INVESTOR2, toWei('10000')))
             expect(await web3.eth.getBalance(WALLET)).eq(toWei('105'))
