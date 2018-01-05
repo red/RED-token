@@ -84,7 +84,7 @@ describe('Contract', function () {
             // angel round
             let addresses = [INVESTOR1, INVESTOR2, INVESTOR3]
             let amounts = [toWei('1000'), toWei('2000'), toWei('3000')]
-            await send(red, DEPLOYER, 'deliverPresaleRedaccounts', addresses, amounts)
+            await send(red, DEPLOYER, 'deliverPresaleRedAccounts', addresses, amounts)
             // FIXME it shouldn't be 0
             expect(await balance(red, INVESTOR1)).eq(toWei('0'))
             expect(await balance(red, INVESTOR1)).eq(toWei('1000'))
@@ -178,7 +178,7 @@ describe('Contract', function () {
         // finalizePresale
 
         // Others except DEPLOYER call this function will fail
-        // deliverPresaleredaccounts
+        // deliverPresaleRedAccounts
 
         // Others except DEPLOYER call this function will fail
         // changeRedTeamAddress
