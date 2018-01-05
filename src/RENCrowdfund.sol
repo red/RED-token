@@ -8,13 +8,13 @@ contract RENCrowdfund is Ownable {
 
     using SafeMath for uint;
 
-    bool public isOpen = false;                            // Is the crowd fund open?
-    address public tokenAddress;                           // Address of the deployed REN token contract
-    address public wallet;                                 // Address of secure wallet to receive crowdfund contributions
+    bool public isOpen = false;                           // Is the crowd fund open?
+    address public tokenAddress;                          // Address of the deployed REN token contract
+    address public wallet;                                // Address of secure wallet to receive crowdfund contributions
 
     uint256 public weiRaised = 0;
-    uint256 public startsAt;                               // Crowdfund starting time (Epoch format)
-    uint256 public endsAt;                                 // Crowdfund ending time (Epoch format)
+    uint256 public startsAt;                              // Crowdfund starting time (Epoch format)
+    uint256 public endsAt;                                // Crowdfund ending time (Epoch format)
 
     RENToken public REN;                                  // Instance of the REN token contract
 
@@ -53,10 +53,10 @@ contract RENCrowdfund is Ownable {
     // Contract's constructor
     // -------------------------------------------------
     function RENCrowdfund(address _tokenAddress) public {
-        wallet       = 0x123;                             // ICO wallet address
-        startsAt     = 1515405600;                        // Jan 8th 2018, 18:00, GMT+8
-        endsAt       = 1517479200;                        // Feb 1th 2018, 18:00, GMT+8
-        tokenAddress = _tokenAddress;                     // REN token Address
+        wallet       = 0x123;                              // ICO wallet address
+        startsAt     = 1515405600;                         // Jan 8th 2018, 18:00, GMT+8
+        endsAt       = 1517479200;                         // Feb 1th 2018, 18:00, GMT+8
+        tokenAddress = _tokenAddress;                      // REN token Address
         REN          = RENToken(tokenAddress);
     }
 

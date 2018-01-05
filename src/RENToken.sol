@@ -32,7 +32,7 @@ contract RENToken is ERC20, Ownable {
     uint256 public icoEndsAt;                              // Crowdsale ending timestamp
     uint256 public redTeamLockingPeriod;                   // Locking period for Red team's supply
 
-    address public crowdfundAddress;                       // Crowdfunding address
+    address public crowdfundAddress;                       // Crowdfunding contract address
     address public redTeamAddress;                         // Red team address
     address public foundationAddress;                      // Foundation address
     address public privateEquityAddress;                   // Private equity address
