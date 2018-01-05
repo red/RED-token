@@ -109,6 +109,8 @@ const logAccounts = (accounts) => {
             INVESTOR:   ${INVESTOR}`)
 }
 
+const now = async (web3) => (await web3.eth.getBlock('latest')).timestamp
+
 const send = async (contract, sender, methodName, ...params) => {
     const method = contract.methods[methodName]
     if (method instanceof Function) {
@@ -137,6 +139,7 @@ module.exports = {
     solcJSON,
     ganacheWeb3,
     logAccounts,
+    now,
     send,
     buy
 }

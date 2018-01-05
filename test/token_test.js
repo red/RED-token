@@ -9,6 +9,7 @@ const {
     ganacheWeb3,
     ZERO_ADDR,
     logAccounts,
+    now,
     send,
     buy
 } = require('./helpers')
@@ -16,7 +17,7 @@ const solcInput = require('../solc-input.json')
 const deploy = require('./deploy')
 
 describe('Contract', function () {
-    const icoStart = new Date(1515405600/* seconds */ * 1000) // Jan 8th 2018, 18:00, GMT+8
+    const icoStartDate = new Date(1515405600/* seconds */ * 1000) // Jan 8th 2018, 18:00, GMT+8
     let web3, snaps
     let accounts, DEPLOYER, WALLET, TEAM, FOUNDATION, BIZ
     let INVESTOR1, INVESTOR2, INVESTOR3
@@ -24,7 +25,7 @@ describe('Contract', function () {
 
     before(async () => {
         // Instantiate clients to an empty in-memory blockchain
-        web3 = ganacheWeb3({time: icoStart})
+        web3 = ganacheWeb3({time: icoStartDate})
         snaps = []
 
         // Provide synchronous access to test accounts
@@ -49,6 +50,13 @@ describe('Contract', function () {
 
     afterEach(async () => {
         await web3.evm.revert(snaps.pop())
+    })
+
+    describe('Blockchain time', () => {
+        it('is roughly the ICO start time', async () => {
+            icoStart /* seconds */ = icoStartDate.getTime() / 1000
+            expect(await now(web3)).within(icoStart, icoStart + 1)
+        })
     })
 
     describe('Angel round', () => {
@@ -76,8 +84,6 @@ describe('Contract', function () {
         })
 
         it('workflow', async () => {
-            const curredtTime = (web3) => web3.eth.getBlock(web3.eth.blockNumber).timestamp
-
             web3.evm.increaseTime(604800)   // 1 week
 
             // angel round
