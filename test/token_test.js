@@ -67,6 +67,15 @@ describe('Contract', function () {
             expect(await expectBalance(ren, INVESTOR2, toWei('2000')))
             expect(await expectBalance(ren, INVESTOR3, toWei('3000')))
 
+            // buying before presale will fail
+            //try {
+            //    await buy(web3, INVESTOR1, renCrowdfund, '1')
+            //} catch (error) {}
+            //await expectBalance(ren, INVESTOR1, toWei('1000'))
+
+            // open presale
+			await send(renCrowdfund, DEPLOYER, 'openCrowdfund')
+
             // presale buy 1
             await buy(web3, INVESTOR1, renCrowdfund, '1')
             expect(await expectBalance(ren, INVESTOR1, toWei('3750')))

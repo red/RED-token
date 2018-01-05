@@ -26,14 +26,16 @@ const base = async (web3, solcOutput, accounts) => {
             .send()
     }
 
-    const ren = await deploy(RENToken, TEAM, FOUNDATION, BIZ)
+    const ren = await deploy(RENToken)
     const renCrowdfund = await deploy(RENCrowdfund, ren.options.address)
 
     await send(ren, DEPLOYER, 'setCrowdfundAddress', renCrowdfund.options.address)
+    await send(ren, DEPLOYER, 'changeFoundationAddress', FOUNDATION)
+    await send(ren, DEPLOYER, 'changeBizDevAddress', BIZ)
+    await send(ren, DEPLOYER, 'changeRedTeamAddress', TEAM)
     // starts the ICO from now on, ends in 20 seconds, unlocks redteam token in 30 seconds
     await send(renCrowdfund, DEPLOYER, 'setICOPeriod', Date.now() / 1000)
     await send(renCrowdfund, DEPLOYER, 'changeWalletAddress', WALLET)
-    await send(renCrowdfund, DEPLOYER, 'openCrowdfund')
 
     return {ren, renCrowdfund}
 }

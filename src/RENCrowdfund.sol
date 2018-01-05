@@ -112,6 +112,10 @@ contract RENCrowdfund is Ownable {
     }
 
 /*-------------- For testing ------------------------*/
+/*-------------- For testing ------------------------*/
+/*------ Remove Those functions when depoly ---------*/
+/*-------------- For testing ------------------------*/
+/*-------------- For testing ------------------------*/
     function setICOPeriod(uint openTime) public onlyOwner {
         startsAt = openTime;
         endsAt = openTime.add(20 seconds);
