@@ -110,17 +110,17 @@ describe('Contract', function () {
             await buy(web3, INVESTOR1, redCrowdfund, '1')
             // 1000 + 2750 = 3750
             expect(await balance(red, INVESTOR1)).eq(toWei('3750'))
-            expect(await web3.eth.getBalance(WALLET)).eq(toWei('101'))
+            expect(await balance(web3, WALLET)).eq(toWei('101'))
             await buy(web3, INVESTOR1, redCrowdfund, '1')
             // 3750 + 2750 = 6500
             expect(await balance(red, INVESTOR1)).eq(toWei('6500'))
-            expect(await web3.eth.getBalance(WALLET)).eq(toWei('102'))
+            expect(await balance(web3, WALLET)).eq(toWei('102'))
 
             // presale buy 2
             await buy(web3, INVESTOR2, redCrowdfund, '2')
             // 2000 + (2750 * 2) = 7500
             expect(await balance(red, INVESTOR2)).eq(toWei('7500'))
-            expect(await web3.eth.getBalance(WALLET)).eq(toWei('104'))
+            expect(await balance(web3, WALLET)).eq(toWei('104'))
 
             // close presale
             await send(red, DEPLOYER, 'finalizePresale')
@@ -129,7 +129,7 @@ describe('Contract', function () {
             await buy(web3, INVESTOR2, redCrowdfund, '1')
             // 7500 + 2500 = 10,000
             expect(await balance(red, INVESTOR2)).eq(toWei('10000'))
-            expect(await web3.eth.getBalance(WALLET)).eq(toWei('105'))
+            expect(await balance(web3, WALLET)).eq(toWei('105'))
 
             // close ICO
             await web3.evm.increaseTime(604800 * 4)
@@ -142,7 +142,7 @@ describe('Contract', function () {
             }
             // 7500 + 2500 = 10,000
             expect(await balance(red, INVESTOR2)).eq(toWei('10000'))
-            expect(await web3.eth.getBalance(WALLET)).eq(toWei('105'))
+            expect(await balance(web3, WALLET)).eq(toWei('105'))
         })
     })
 
