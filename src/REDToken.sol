@@ -196,7 +196,7 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     // Function for the Crowdfund to transfer tokens
     // -------------------------------------------------
-    function transferFromCrowdfund(address _to, uint256 _amount) public onlyCrowdfund nonZeroAmount(_amount) nonZeroAddress(_to) returns (bool success) {
+    function transferFromCrowdfund(address _to, uint256 _amount) external onlyCrowdfund nonZeroAmount(_amount) nonZeroAddress(_to) returns (bool success) {
         require(balanceOf(crowdfundAddress) >= _amount);
         decrementBalance(crowdfundAddress, _amount);
         addToBalance(_to, _amount);
@@ -207,7 +207,7 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     // Releases Red team supply after locking period is passed
     // -------------------------------------------------
-    function releaseRedTeamTokens() public checkRedTeamLockingPeriod onlyOwner returns(bool success) {
+    function releaseRedTeamTokens() external checkRedTeamLockingPeriod onlyOwner returns(bool success) {
         require(redTeamSupply > 0);
         addToBalance(redTeamAddress, redTeamSupply);
         Transfer(0x0, redTeamAddress, redTeamSupply);
@@ -258,7 +258,7 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     // Changes Red Team wallet
     // -------------------------------------------------
-    function changeRedTeamAddress(address _wallet) public onlyOwner {
+    function changeRedTeamAddress(address _wallet) external onlyOwner {
         redTeamAddress = _wallet;
     }
 

@@ -63,7 +63,7 @@ contract REDCrowdfund is Ownable {
     // -------------------------------------------------
     // Changes main contribution wallet
     // -------------------------------------------------
-    function changeWalletAddress(address _wallet) public onlyOwner {
+    function changeWalletAddress(address _wallet) external onlyOwner {
         wallet = _wallet;
         WalletAddressChanged(_wallet);
     }
