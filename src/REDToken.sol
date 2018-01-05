@@ -248,7 +248,7 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     // Function to send RED to presale investors
     // -------------------------------------------------
-    function deliverPresaleRedaccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner returns (bool success) {
+    function deliverPresaleRedAccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner returns (bool success) {
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
             deliverPresaleREDBalance(_batchOfAddresses[i], _amountOfRED[i]);
         }

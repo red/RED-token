@@ -33,11 +33,6 @@ async function assertContractThrows(fn, regExp, txt) {
     await assertThrowsAsync(fn, /invalid opcode|VM Exception/, 'Contract call should fail')
 }
 
-async function expectBalance(eip20, account, expectedBalance) {
-    return expect(await eip20.methods.balanceOf(account).call())
-        .eq(expectedBalance)
-}
-
 async function balance(web3_or_eip20, account) {
     const eip20 = web3_or_eip20.methods
     const eth = web3_or_eip20.eth
@@ -70,9 +65,9 @@ const solcJSON = (plan) => {
     }
 }
 
-const ganacheWeb3 = () => {
+const ganacheWeb3 = (opts) => {
     const truffleMnemonic = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
-    const provider = Ganache.provider({mnemonic: truffleMnemonic})
+    const provider = Ganache.provider(Object.assign(opts, {mnemonic: truffleMnemonic}))
     const web3 = new Web3(provider)
 
     // Prepare chain snapshotting
@@ -133,7 +128,6 @@ const buy = async (web3, buyer, seller, eth) =>
 module.exports = {
     expect,
     assertContractThrows,
-    expectBalance,
     balance,
     ZERO_ADDR: padLeft(0x0, 40),
     BN,
