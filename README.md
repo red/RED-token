@@ -1,6 +1,6 @@
-# RCT
+# REN
 
-Red Community Token
+Red Exchange Note
 
 ## Setup
 
@@ -22,8 +22,8 @@ brew install node yarn solidity
 ### Common setup
 
 ```bash
-git clone git@github.com:dockimbel/RCT.git
-cd RCT/
+git clone git@github.com:dockimbel/REN.git
+cd REN/
 yarn install
 ```
 
