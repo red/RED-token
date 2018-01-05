@@ -1,6 +1,6 @@
 const {Assertion, expect} = chai = require('chai')
 const Web3 = require('web3')
-const {BN, toBN, padLeft, toWei, fromWei} = require('web3-utils')
+const {BN, toBN, padLeft, fromWei, toWei} = require('web3-utils')
 const Ganache = require("ganache-core")
 const solc = require('solc')
 const path = require('path')
@@ -102,8 +102,14 @@ const logAccounts = (accounts) => {
             INVESTOR:   ${INVESTOR}`)
 }
 
-const send = async (contract, sender, method, ...params) =>
-    contract.methods[method](...params).send({from: sender})
+const send = async (contract, sender, methodName, ...params) => {
+    const method = contract.methods[methodName]
+    if (method instanceof Function) {
+        method(...params).send({from: sender})
+    } else{
+        throw new Error(`${contract.options.name}.${methodName} is undefined`)
+    }
+}
 
 const buy = async (web3, buyer, seller, eth) =>
     web3.eth.sendTransaction({
@@ -119,6 +125,7 @@ module.exports = {
     ZERO_ADDR: padLeft(0x0, 40),
     BN,
     toBN,
+    fromWei,
     toWei,
     solcJSON,
     ganacheWeb3,

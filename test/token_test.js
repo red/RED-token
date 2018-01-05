@@ -3,6 +3,7 @@ const {
     assertContractThrows,
     expectBalance,
     toBN,
+    fromWei,
     toWei,
     solcJSON,
     ganacheWeb3,
@@ -67,7 +68,7 @@ describe('Contract', function () {
             // angel round
             let addresses = [INVESTOR1, INVESTOR2, INVESTOR3]
             let amounts = [toWei('1000'), toWei('2000'), toWei('3000')]
-            let success = (await send(ren, DEPLOYER, 'deliverPresaleRENaccounts',addresses, amounts))
+            let success = (await send(ren, DEPLOYER, 'deliverPresaleRENaccounts', addresses, amounts))
             expect(await expectBalance(ren, INVESTOR1, toWei('1000')))
             expect(await expectBalance(ren, INVESTOR2, toWei('2000')))
             expect(await expectBalance(ren, INVESTOR3, toWei('3000')))
@@ -75,11 +76,12 @@ describe('Contract', function () {
             // buying before presale will fail
             try {
                 await buy(web3, INVESTOR1, renCrowdfund, '1')
-            } catch (error) {}
+            } catch (error) {
+            }
             await expectBalance(ren, INVESTOR1, toWei('1000'))
 
             // open presale
-			await send(renCrowdfund, DEPLOYER, 'openCrowdfund')
+            await send(renCrowdfund, DEPLOYER, 'openCrowdfund')
 
             // presale buy 1
             // presale price: 1 ETH = 2750 REN
@@ -90,7 +92,7 @@ describe('Contract', function () {
             await buy(web3, INVESTOR1, renCrowdfund, '1')
             // 3750 + 2750 = 6500
             expect(await expectBalance(ren, INVESTOR1, toWei('6500')))
-            expect(await web3.eth.getBalance(WALLET)).eq(toWei('102')) 
+            expect(await web3.eth.getBalance(WALLET)).eq(toWei('102'))
 
             // presale buy 2
             await buy(web3, INVESTOR2, renCrowdfund, '2')

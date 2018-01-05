@@ -1,9 +1,7 @@
 const {send} = require('./helpers')
 
 const base = async (web3, solcOutput, accounts) => {
-    let DEPLOYER, WALLET, TEAM, FOUNDATION, BIZ
-    let INVESTOR1, INVESTOR2, INVESTOR3
-    ;[
+    const [
         DEPLOYER,
         WALLET,
         TEAM,
@@ -14,16 +12,32 @@ const base = async (web3, solcOutput, accounts) => {
         INVESTOR3
     ] = accounts
 
+    // Merge all contracts across all files into one registry
+    const contractRegistry = Object.assign(...Object.values(solcOutput.contracts))
+
+    // Preserve contract names in compilation output
+    Object.keys(contractRegistry)
+        .forEach((name) => contractRegistry[name].NAME = name)
+
     const {
         RENToken,
         RENCrowdfund
-    } = Object.assign.apply({}, Object.values(solcOutput.contracts))
+    } = contractRegistry
 
     const deploy = async (Contract, ...arguments) => {
-        const contractDefaultOptions = {from: DEPLOYER, gas: 3000000}
+        const contractDefaultOptions = {
+            from: DEPLOYER,
+            gas: 3000000,
+            name: Contract.NAME
+        }
         return new web3.eth.Contract(Contract.abi, contractDefaultOptions)
             .deploy({data: Contract.evm.bytecode.object, arguments})
             .send()
+            // FIXME https://github.com/ethereum/web3.js/issues/1253 workaround
+            .then(contract => {
+                contract.setProvider(web3.currentProvider)
+                return contract
+            })
     }
 
     const ren = await deploy(RENToken)
