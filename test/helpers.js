@@ -112,7 +112,7 @@ const logAccounts = (accounts) => {
 const send = async (contract, sender, methodName, ...params) => {
     const method = contract.methods[methodName]
     if (method instanceof Function) {
-        method(...params).send({from: sender})
+        return method(...params).send({from: sender})
     } else{
         throw new Error(`${contract.options.name}.${methodName} is undefined`)
     }
