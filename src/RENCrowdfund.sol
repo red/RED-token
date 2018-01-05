@@ -8,6 +8,7 @@ contract RENCrowdfund is Ownable {
 
     using SafeMath for uint;
 
+    bool public isOpen = false;                            // Is the crowd fund open?
     address public tokenAddress;                           // Address of the deployed REN token contract
     address public wallet;                                 // Address of secure wallet to receive crowdfund contributions
 
@@ -36,7 +37,7 @@ contract RENCrowdfund is Ownable {
     }
 
     modifier crowdfundIsActive() {                         // Ensures the crowdfund is ongoing
-        require(now >= startsAt && now <= endsAt);
+        require(isOpen && now >= startsAt && now <= endsAt);
         _;
     }
 
@@ -71,6 +72,7 @@ contract RENCrowdfund is Ownable {
     // Opens the crowdfunding
     // -------------------------------------------------
     function openCrowdfund() external onlyOwner returns (bool success) {
+        isOpen = true;
         REN.startCrowdfund();
         return true;
     }
@@ -98,6 +100,7 @@ contract RENCrowdfund is Ownable {
     function closeCrowdfund() external notBeforeCrowdfundEnds onlyOwner returns (bool success) {
         AmountRaised(wallet, weiRaised);
         REN.finalizeCrowdfund();
+        isOpen = false;
         return true;
     }
 
@@ -111,6 +114,10 @@ contract RENCrowdfund is Ownable {
         buyTokens(msg.sender);
     }
 
+/*-------------- For testing ------------------------*/
+/*-------------- For testing ------------------------*/
+/*------ Remove Those functions when depoly ---------*/
+/*-------------- For testing ------------------------*/
 /*-------------- For testing ------------------------*/
     function setICOPeriod(uint openTime) public onlyOwner {
         startsAt = openTime;

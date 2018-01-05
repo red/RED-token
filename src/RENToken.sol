@@ -20,7 +20,7 @@ contract RENToken is ERC20, Ownable {
 
 /*----------------- ICO Information -----------------*/
 
-	uint256 public angelSupply;							   // Angels supply
+    uint256 public angelSupply;                            // angel sale supply
     uint256 public privateEquitySupply;                    // Private equity supply
     uint256 public publicSupply;                           // Total supply for the ICO
     uint256 public foundationSupply;                       // Red Foundation/Community supply
@@ -142,7 +142,7 @@ contract RENToken is ERC20, Ownable {
     // -------------------------------------------------
     // Contract's constructor
     // -------------------------------------------------
-    function RENToken(address team, address foundation, address biz) public {
+    function RENToken() public {
         totalSupply         = 200000000 * 1e18;             // 100% - 200 million total REN with 18 decimals
 
         angelSupply         =  20000000 * 1e18;             //  10% -  20 million REN for angels sale
@@ -153,9 +153,9 @@ contract RENToken is ERC20, Ownable {
         marketingSupply     =  20000000 * 1e18;             //  10% -  20 million REN for covering marketing and strategic expenses
 
         presaleAmountRemaining = angelSupply + privateEquitySupply; // Decreased over the course of the pre-sale
-        redTeamAddress      = team;                         // Red Team address
-        foundationAddress   = foundation;                   // Foundation/Community address
-        bizDevAddress       = biz;                          // Business development address
+        redTeamAddress      = 0x123;                        // Red Team address
+        foundationAddress   = 0x123;                        // Foundation/Community address
+        bizDevAddress       = 0x123;                        // Business development address
 
         icoStartsAt          = 1515405600;                  // Jan 8th 2018, 18:00, GMT+8
         icoEndsAt            = 1517479200;                  // Feb 1th 2018, 18:00, GMT+8
@@ -254,6 +254,13 @@ contract RENToken is ERC20, Ownable {
         return true;
     }
 
+    // -------------------------------------------------
+    // Changes Red Team wallet
+    // -------------------------------------------------
+    function changeRedTeamAddress(address _wallet) public onlyOwner {
+        redTeamAddress = _wallet;
+    }
+
 /*----------------- Helper functions -----------------*/
 
     // -------------------------------------------------
@@ -282,11 +289,22 @@ contract RENToken is ERC20, Ownable {
     }
 
 /*-------------- For testing ------------------------*/
+/*-------------- For testing ------------------------*/
+/*------ Remove Those functions when depoly ---------*/
+/*-------------- For testing ------------------------*/
+/*-------------- For testing ------------------------*/
     function setPeriod(uint openTime) public onlyCrowdfund {
         icoStartsAt = openTime;
         icoEndsAt = openTime.add(20 seconds);
         redTeamLockingPeriod = icoEndsAt.add(10 seconds);
     }
 
+    function changeFoundationAddress(address _wallet) public onlyOwner {
+        foundationAddress = _wallet;
+    }
+
+    function changeBizDevAddress(address _wallet) public onlyOwner {
+        bizDevAddress = _wallet;
+    }
 }
 
