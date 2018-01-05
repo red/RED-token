@@ -293,12 +293,6 @@ contract RENToken is ERC20, Ownable {
 /*------ Remove Those functions before deploying on mainnet ---------*/
 /*-------------- For testing ------------------------*/
 /*-------------- For testing ------------------------*/
-    function setPeriod(uint openTime) public onlyCrowdfund {
-        icoStartsAt = openTime;
-        icoEndsAt = openTime.add(20 seconds);
-        redTeamLockingPeriod = icoEndsAt.add(10 seconds);
-    }
-
     function changeFoundationAddress(address _wallet) public onlyOwner {
         foundationAddress = _wallet;
     }

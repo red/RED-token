@@ -113,15 +113,4 @@ contract RENCrowdfund is Ownable {
     function () public payable {
         buyTokens(msg.sender);
     }
-
-/*-------------- For testing ------------------------*/
-/*-------------- For testing ------------------------*/
-/*------ Remove Those functions when depoly ---------*/
-/*-------------- For testing ------------------------*/
-/*-------------- For testing ------------------------*/
-    function setICOPeriod(uint openTime) public onlyOwner {
-        startsAt = openTime;
-        endsAt = openTime.add(20 seconds);
-        REN.setPeriod(openTime);
-    }
 }
