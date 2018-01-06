@@ -55,7 +55,7 @@ contract REDCrowdfund is Ownable {
     function REDCrowdfund(address _tokenAddress) public {
         wallet       = 0x123;                              // ICO wallet address
         startsAt     = 1515405600;                         // Jan 8th 2018, 18:00, GMT+8
-        endsAt       = 1517479200;                         // Feb 1th 2018, 18:00, GMT+8
+        endsAt       = 1517824800;                         // Feb 5th 2018, 18:00, GMT+8
         tokenAddress = _tokenAddress;                      // RED token Address
         RED          = REDToken(tokenAddress);
     }

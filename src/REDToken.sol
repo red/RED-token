@@ -155,10 +155,10 @@ contract REDToken is ERC20, Ownable {
         presaleAmountRemaining = angelSupply + privateEquitySupply; // Decreased over the course of the pre-sale
         redTeamAddress       = 0x31aa507c140E012d0DcAf041d482e04F36323B03;       // Red Team address
         foundationAddress    = 0x93e3AF42939C163Ee4146F63646Fb4C286CDbFeC;       // Foundation/Community address
-        marketingAddress     = 0x0;                       // Marketing/Strategic address
+        marketingAddress     = 0x0;                         // Marketing/Strategic address
 
         icoStartsAt          = 1515405600;                  // Jan 8th 2018, 18:00, GMT+8
-        icoEndsAt            = 1517479200;                  // Feb 1th 2018, 18:00, GMT+8
+        icoEndsAt            = 1517824800;                  // Feb 5th 2018, 18:00, GMT+8
         //angelLockingPeriod   = icoEndsAt.add(90 days);      //  3 months locking period
         redTeamLockingPeriod = icoEndsAt.add(365 days);     // 12 months locking period
 
