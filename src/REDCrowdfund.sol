@@ -8,6 +8,8 @@ contract REDCrowdfund is Ownable {
 
     using SafeMath for uint;
 
+    mapping (address => bool) whiteList;                  // Buyers whitelisting mapping
+
     bool public isOpen = false;                           // Is the crowd fund open?
     address public tokenAddress;                          // Address of the deployed RED token contract
     address public wallet;                                // Address of secure wallet to receive crowdfund contributions
@@ -46,6 +48,11 @@ contract REDCrowdfund is Ownable {
         _;
     }
 
+    modifier onlyWhiteList() {                            // Ensures only whitelisted address can buy tokens
+        require(whiteList[msg.sender]);
+        _;
+    }
+
 
 /*----------------- Crowdfunding API -----------------*/
 
@@ -81,7 +88,7 @@ contract REDCrowdfund is Ownable {
     // Function to buy RED. One can also buy RED by calling this function directly and send
     // it to another destination.
     // -------------------------------------------------
-    function buyTokens(address _to) public crowdfundIsActive nonZeroAddress(_to) nonZeroValue payable {
+    function buyTokens(address _to) public crowdfundIsActive onlyWhiteList nonZeroAddress(_to) nonZeroValue payable {
         uint256 weiAmount = msg.value;
         uint256 tokens;
         uint price = 2500;
@@ -101,6 +108,17 @@ contract REDCrowdfund is Ownable {
         AmountRaised(wallet, weiRaised);
         RED.finalizeCrowdfund();
         isOpen = false;
+        return true;
+    }
+
+
+    // -------------------------------------------------
+    // Function to whitelist buyers
+    // -------------------------------------------------
+    function whitelistAccounts(address[] _batchOfAddresses) external onlyOwner returns (bool success) {
+        for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
+            whiteList[_batchOfAddresses[i]] = true;
+        }
         return true;
     }
 
