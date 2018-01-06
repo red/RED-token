@@ -279,10 +279,12 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     function partialUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner notBeforeCrowdfundEnds returns (bool success) {
         uint256 amount;
+        address holder;
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            amount = angels[_accountHolder].mul(20).div(100);
-            angels[_accountHolder] = angels[_accountHolder].sub(amount);
-            addToBalance(_accountHolder, amount);
+            holder = _batchOfAddresses[i];
+            amount = angels[holder].mul(20).div(100);
+            angels[holder] = angels[holder].sub(amount);
+            addToBalance(holder, amount);
         }
         return true;
     }
@@ -292,10 +294,12 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     function fullUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner checkAngelsLockingPeriod returns (bool success) {
         uint256 amount;
+        address holder;
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            amount = angels[_accountHolder];
-            angels[_accountHolder] = 0;
-            addToBalance(_accountHolder, amount);
+            holder = _batchOfAddresses[i];
+            amount = angels[holder];
+            angels[holder] = 0;
+            addToBalance(holder, amount);
         }
         return true;
     }
