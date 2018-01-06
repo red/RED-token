@@ -260,6 +260,9 @@ contract REDToken is ERC20, Ownable {
         redTeamAddress = _wallet;
     }
 
+    // -------------------------------------------------
+    // Changes Marketing&Strategic wallet
+    // -------------------------------------------------
     function changeMarketingAddress(address _wallet) external onlyOwner {
         marketingAddress = _wallet;
     }
