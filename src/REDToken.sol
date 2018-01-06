@@ -15,6 +15,7 @@ contract REDToken is ERC20, Ownable {
 
     uint8 public decimals = 18;                            // (ERC20 API) Decimal precision, factor is 1e18
 
+    mapping (address => uint256) angels;                   // Angels accounts table (during locking period only)
     mapping (address => uint256) accounts;                 // User's accounts table
     mapping (address => mapping (address => uint256)) allowed; // User's allowances table
 
@@ -27,6 +28,7 @@ contract REDToken is ERC20, Ownable {
     uint256 public redTeamSupply;                          // Red team supply
     uint256 public marketingSupply;                        // Marketing & strategic supply
 
+    uint256 public angelAmountRemaining;                   // Amount of private angels tokens remaining at a given time
     uint256 public presaleAmountRemaining;                 // Amount of presale tokens remaining at a given time
     uint256 public icoStartsAt;                            // Crowdsale ending timestamp
     uint256 public icoEndsAt;                              // Crowdsale ending timestamp
@@ -133,7 +135,7 @@ contract REDToken is ERC20, Ownable {
     // Gets the RED balance of any address
     // -------------------------------------------------
     function balanceOf(address _owner) public constant returns (uint256 balance) {
-        return accounts[_owner];
+        return accounts[_owner] + angels[_owner];
     }
 
 
@@ -145,14 +147,15 @@ contract REDToken is ERC20, Ownable {
     function REDToken() public {
         totalSupply         = 200000000 * 1e18;             // 100% - 200 million total RED with 18 decimals
 
-        angelSupply         =  20000000 * 1e18;             //  10% -  20 million RED for angels sale
-        privateEquitySupply =  48000000 * 1e18;             //  24% -  48 million RED for pre-crowdsale
+        angelSupply         =  20000000 * 1e18;             //  10% -  20 million RED for private angels sale
+        privateEquitySupply =  48000000 * 1e18;             //  24% -  48 million RED for early-bird sale
         publicSupply        =  12000000 * 1e18;             //   6% -  12 million RED for the public crowdsale
         redTeamSupply       =  30000000 * 1e18;             //  15% -  30 million RED for Red team
         foundationSupply    =  70000000 * 1e18;             //  35% -  70 million RED for foundation/incentivising efforts
         marketingSupply     =  20000000 * 1e18;             //  10% -  20 million RED for covering marketing and strategic expenses
 
-        presaleAmountRemaining = angelSupply + privateEquitySupply; // Decreased over the course of the pre-sale
+        angelAmountRemaining = angelSupply;                 // Decreased over the course of the private angel sale
+        presaleAmountRemaining = privateEquitySupply;       // Decreased over the course of the pre-sale
         redTeamAddress       = 0x31aa507c140E012d0DcAf041d482e04F36323B03;       // Red Team address
         foundationAddress    = 0x93e3AF42939C163Ee4146F63646Fb4C286CDbFeC;       // Foundation/Community address
         marketingAddress     = 0x0;                         // Marketing/Strategic address
@@ -257,11 +260,37 @@ contract REDToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Function to send RED to presale investors
+    // Function to reserve RED to private angels investors (initially locked)
     // -------------------------------------------------
-    function deliverPresaleRedAccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner returns (bool success) {
+    function deliverAngelsREDAccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner returns (bool success) {
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            deliverPresaleREDBalance(_batchOfAddresses[i], _amountOfRED[i]);
+            deliverAngelsREDBalance(_batchOfAddresses[i], _amountOfRED[i]);
+        }
+        return true;
+    }
+
+    // -------------------------------------------------
+    // Function to unlock 20% RED to private angels investors
+    // -------------------------------------------------
+    function partialUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner returns (bool success) {
+        uint256 amount;
+        for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
+            amount = angels[_accountHolder].mul(20).div(100);
+            angels[_accountHolder] = angels[_accountHolder].sub(amount);
+            addToBalance(_accountHolder, amount);
+        }
+        return true;
+    }
+
+    // -------------------------------------------------
+    // Function to unlock all remaining RED to private angels investors (after 3 months)
+    // -------------------------------------------------
+    function fullUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner returns (bool success) {
+        uint256 amount;
+        for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
+            amount = angels[_accountHolder];
+            angels[_accountHolder] = 0;
+            addToBalance(_accountHolder, amount);
         }
         return true;
     }
@@ -272,11 +301,11 @@ contract REDToken is ERC20, Ownable {
     // All presale purchases will be delivered. If one address has contributed more than once,
     // the contributions will be aggregated
     // -------------------------------------------------
-    function deliverPresaleREDBalance(address _accountHolder, uint _amountOfBoughtRED) internal onlyOwner {
-        require(presaleAmountRemaining > 0);
-        addToBalance(_accountHolder, _amountOfBoughtRED);
+    function deliverAngelsREDBalance(address _accountHolder, uint _amountOfBoughtRED) internal onlyOwner {
+        require(angelAmountRemaining > 0);
+        angels[_accountHolder] = angels[_accountHolder].add(_amountOfBoughtRED);
         Transfer(0x0, _accountHolder, _amountOfBoughtRED);
-        presaleAmountRemaining = presaleAmountRemaining.sub(_amountOfBoughtRED);
+        angelAmountRemaining = angelAmountRemaining.sub(_amountOfBoughtRED);
     }
 
     // -------------------------------------------------
