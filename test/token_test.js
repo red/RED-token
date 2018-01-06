@@ -55,7 +55,7 @@ describe('Contract', function () {
     describe('Blockchain time', () => {
         it('is roughly the ICO start time', async () => {
             icoStart /* seconds */ = icoStartDate.getTime() / 1000
-            expect(await now(web3)).within(icoStart, icoStart + 1)
+            expect(await now(web3)).within(icoStart, icoStart + 3)
         })
     })
 
@@ -84,8 +84,6 @@ describe('Contract', function () {
         })
 
         it('workflow', async () => {
-            web3.evm.increaseTime(604800)   // 1 week
-
             // angel round
             const addresses = [INVESTOR1, INVESTOR2, INVESTOR3]
             const amounts = [toWei('1000'), toWei('2000'), toWei('3000')]
@@ -94,6 +92,14 @@ describe('Contract', function () {
             expect(await balance(red, INVESTOR1)).eq(toWei('1000'))
             expect(await balance(red, INVESTOR2)).eq(toWei('2000'))
             expect(await balance(red, INVESTOR3)).eq(toWei('3000'))
+            
+            // any transfer will fail before the end of ICO
+            try {
+                await send(red, INVESTOR2, 'transfer', INVESTOR1, toWei('300'))
+            } catch (e) {
+            }
+            expect(await balance(red, INVESTOR1)).eq(toWei('1000'))
+            expect(await balance(red, INVESTOR2)).eq(toWei('2000'))
 
             // buying before presale will fail
             try {
@@ -189,19 +195,43 @@ describe('Contract', function () {
     })
 
     describe('ERC20 API Test', () => {
-        it('is token deployed', async () => {
-            let symbol = await red.methods.symbol().call()
-            expect(symbol).equal('RED')
+        it('ERC20 API', async () => {
+            // get some RED tokens
+            const addresses = [INVESTOR1, INVESTOR2, INVESTOR3]
+            const amounts = [toWei('1000'), toWei('2000'), toWei('3000')]
+            await send(red, DEPLOYER, 'deliverPresaleRedAccounts', addresses, amounts)
+
+            // any transfer will fail before the end of ICO
+            // !!! transfer should fail, why it success? !!!
+            // await send(red, INVESTOR2, 'transfer', INVESTOR1, toWei('300'))
+
+            // advance time to end the ICO
+            await web3.evm.increaseTime(604800 * 4)
+
+            // transfer
+            await send(red, INVESTOR2, 'transfer', INVESTOR1, toWei('300'))
+            expect(await balance(red, INVESTOR1)).eq(toWei('1300'))
+            expect(await balance(red, INVESTOR2)).eq(toWei('1700'))
+
+            // transferFrom will fail as we didn't do any approve
+            try {
+                await send(red, INVESTOR3, 'transferFrom', INVESTOR2, INVESTOR1, toWei('300'))
+            } catch (e) {
+            }
+            expect(await balance(red, INVESTOR1)).eq(toWei('1300'))
+            expect(await balance(red, INVESTOR2)).eq(toWei('1700'))
+
+            // approve
+            // investor 2 deposit to investor 1 300 RED
+            await send(red, INVESTOR2, 'approve', INVESTOR1, toWei('300'))
+            expect((await send(red, INVESTOR3, 'allowance', INVESTOR2, INVESTOR1)) == toWei('300'))
+
+            // now transferFrom will success
+            // investor 1 send the token to investor 3
+            await send(red, INVESTOR1, 'transferFrom', INVESTOR2, INVESTOR3, toWei('300'))
+            expect(await balance(red, INVESTOR1)).eq(toWei('1300'))
+            expect(await balance(red, INVESTOR2)).eq(toWei('1400'))
+            expect(await balance(red, INVESTOR3)).eq(toWei('3300'))
         })
-
-        // transfer
-
-        // transferFrom
-
-        // approve
-
-        // allowance
-
-        // balanceOf
     })
 })

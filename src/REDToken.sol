@@ -246,6 +246,17 @@ contract REDToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
+    // Changes Red Team wallet
+    // -------------------------------------------------
+    function changeRedTeamAddress(address _wallet) external onlyOwner {
+        redTeamAddress = _wallet;
+    }
+
+    function changeMarketingAddress(address _wallet) external onlyOwner {
+        marketingAddress = _wallet;
+    }
+
+    // -------------------------------------------------
     // Function to send RED to presale investors
     // -------------------------------------------------
     function deliverPresaleRedAccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner returns (bool success) {
@@ -253,13 +264,6 @@ contract REDToken is ERC20, Ownable {
             deliverPresaleREDBalance(_batchOfAddresses[i], _amountOfRED[i]);
         }
         return true;
-    }
-
-    // -------------------------------------------------
-    // Changes Red Team wallet
-    // -------------------------------------------------
-    function changeRedTeamAddress(address _wallet) external onlyOwner {
-        redTeamAddress = _wallet;
     }
 
 /*----------------- Helper functions -----------------*/
@@ -296,10 +300,6 @@ contract REDToken is ERC20, Ownable {
 /*-------------- For testing ------------------------*/
     function changeFoundationAddress(address _wallet) public onlyOwner {
         foundationAddress = _wallet;
-    }
-
-    function changeMarketingAddress(address _wallet) public onlyOwner {
-        marketingAddress = _wallet;
     }
 }
 
