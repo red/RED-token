@@ -21,15 +21,15 @@ contract REDToken is ERC20, Ownable {
 
 /*----------------- ICO Information -----------------*/
 
-    uint256 public angelSupply;                            // angel sale supply
-    uint256 public privateEquitySupply;                    // Private equity supply
-    uint256 public publicSupply;                           // Total supply for the ICO
+    uint256 public angelSupply;                            // Angels sale supply
+    uint256 public earlyBirdsSupply;                       // Early birds supply
+    uint256 public publicSupply;                           // Open round supply
     uint256 public foundationSupply;                       // Red Foundation/Community supply
     uint256 public redTeamSupply;                          // Red team supply
     uint256 public marketingSupply;                        // Marketing & strategic supply
 
     uint256 public angelAmountRemaining;                   // Amount of private angels tokens remaining at a given time
-    uint256 public presaleAmountRemaining;                 // Amount of presale tokens remaining at a given time
+    uint256 public earlyBirdsAmountRemaining;              // Amount of early birds tokens remaining at a given time
     uint256 public icoStartsAt;                            // Crowdsale ending timestamp
     uint256 public icoEndsAt;                              // Crowdsale ending timestamp
     uint256 public redTeamLockingPeriod;                   // Locking period for Red team's supply
@@ -41,15 +41,15 @@ contract REDToken is ERC20, Ownable {
 
     enum icoStages {
         Ready,                                             // Initial state on contract's creation
-        PreSale,                                           // Presale state
+        EarlyBirds,                                        // Early birds state
         PublicSale,                                        // Public crowdsale state
         Done                                               // Ending state after ICO
     }
-    icoStages stage;                                       // Crowdfunding curREDt state
+    icoStages stage;                                       // Crowdfunding current state
 
 /*----------------- Events -----------------*/
 
-    event PresaleFinalized(uint tokensRemaining);          // Event called when presale is done
+    event EarlyBirdsFinalized(uint tokensRemaining);       // Event called when early birds round is done
     event CrowdfundFinalized(uint tokensRemaining);        // Event called when crowdfund is done
 
 /*----------------- Modifiers -----------------*/
@@ -148,21 +148,21 @@ contract REDToken is ERC20, Ownable {
         totalSupply         = 200000000 * 1e18;             // 100% - 200 million total RED with 18 decimals
 
         angelSupply         =  20000000 * 1e18;             //  10% -  20 million RED for private angels sale
-        privateEquitySupply =  48000000 * 1e18;             //  24% -  48 million RED for early-bird sale
+        earlyBirdsSupply    =  48000000 * 1e18;             //  24% -  48 million RED for early-bird sale
         publicSupply        =  12000000 * 1e18;             //   6% -  12 million RED for the public crowdsale
         redTeamSupply       =  30000000 * 1e18;             //  15% -  30 million RED for Red team
         foundationSupply    =  70000000 * 1e18;             //  35% -  70 million RED for foundation/incentivising efforts
         marketingSupply     =  20000000 * 1e18;             //  10% -  20 million RED for covering marketing and strategic expenses
 
         angelAmountRemaining = angelSupply;                 // Decreased over the course of the private angel sale
-        presaleAmountRemaining = privateEquitySupply;       // Decreased over the course of the pre-sale
+        earlyBirdsAmountRemaining = earlyBirdsSupply;       // Decreased over the course of the early birds sale
         redTeamAddress       = 0x31aa507c140E012d0DcAf041d482e04F36323B03;       // Red Team address
         foundationAddress    = 0x93e3AF42939C163Ee4146F63646Fb4C286CDbFeC;       // Foundation/Community address
         marketingAddress     = 0x0;                         // Marketing/Strategic address
 
         icoStartsAt          = 1515405600;                  // Jan 8th 2018, 18:00, GMT+8
         icoEndsAt            = 1517824800;                  // Feb 5th 2018, 18:00, GMT+8
-        //angelLockingPeriod   = icoEndsAt.add(90 days);      //  3 months locking period
+        angelLockingPeriod   = icoEndsAt.add(90 days);      //  3 months locking period
         redTeamLockingPeriod = icoEndsAt.add(365 days);     // 12 months locking period
 
         addToBalance(foundationAddress, foundationSupply);
@@ -172,19 +172,19 @@ contract REDToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Opens pre-sales
+    // Opens early birds sale
     // -------------------------------------------------
     function startCrowdfund() external onlyCrowdfund notBeforeCrowdfundStarts returns(bool) {
         require(stage == icoStages.Ready);
-        stage = icoStages.PreSale;
+        stage = icoStages.EarlyBirds;
         return true;
     }
 
     // -------------------------------------------------
-    // Returns TRUE if pre-sale is currently going on
+    // Returns TRUE if early birds round is currently going on
     // -------------------------------------------------
-    function isPreSaleStage() external view returns(bool) {
-        return (stage == icoStages.PreSale);
+    function isEarlyBirdsStage() external view returns(bool) {
+        return (stage == icoStages.EarlyBirds);
     }
 
     // -------------------------------------------------
@@ -193,7 +193,7 @@ contract REDToken is ERC20, Ownable {
     function setCrowdfundAddress(address _crowdfundAddress) external onlyOwner nonZeroAddress(_crowdfundAddress) {
         require(crowdfundAddress == 0x0);
         crowdfundAddress = _crowdfundAddress;
-        addToBalance(crowdfundAddress, presaleAmountRemaining + publicSupply);
+        addToBalance(crowdfundAddress, earlyBirdsAmountRemaining + publicSupply);
     }
 
     // -------------------------------------------------
@@ -219,17 +219,17 @@ contract REDToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Finalizes presale. If some RED are left, let them overflow to the crowdfund
+    // Finalizes early birds round. If some RED are left, let them overflow to the crowdfund
     // -------------------------------------------------
-    function finalizePresale() external onlyOwner returns (bool success) {
-        require(stage == icoStages.PreSale);
-        uint256 amount = presaleAmountRemaining;
+    function finalizeEarlyBirds() external onlyOwner returns (bool success) {
+        require(stage == icoStages.EarlyBirds);
+        uint256 amount = earlyBirdsAmountRemaining;
         if (amount != 0) {
-            presaleAmountRemaining = 0;
+            earlyBirdsAmountRemaining = 0;
             addToBalance(crowdfundAddress, amount);
         }
         stage = icoStages.PublicSale;
-        PresaleFinalized(amount);                           // event log
+        EarlyBirdsFinalized(amount);                       // event log
         return true;
     }
 
@@ -298,7 +298,7 @@ contract REDToken is ERC20, Ownable {
 /*----------------- Helper functions -----------------*/
 
     // -------------------------------------------------
-    // All presale purchases will be delivered. If one address has contributed more than once,
+    // If one address has contributed more than once,
     // the contributions will be aggregated
     // -------------------------------------------------
     function deliverAngelsREDBalance(address _accountHolder, uint _amountOfBoughtRED) internal onlyOwner {

@@ -93,7 +93,7 @@ contract REDCrowdfund is Ownable {
         uint256 tokens;
         uint price = 2500;
 
-        if (RED.isPreSaleStage()) {price = 2750;}           // 10% discount for pre-sale
+        if (RED.isEarlyBirdsStage()) {price = 2750;}       // 10% discount for early birds
         tokens = weiAmount * price;
         weiRaised = weiRaised.add(weiAmount);
         wallet.transfer(weiAmount);
