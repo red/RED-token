@@ -111,7 +111,6 @@ contract REDCrowdfund is Ownable {
         return true;
     }
 
-
     // -------------------------------------------------
     // Function to whitelist buyers
     // -------------------------------------------------

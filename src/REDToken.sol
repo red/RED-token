@@ -29,10 +29,10 @@ contract REDToken is ERC20, Ownable {
     uint256 public marketingSupply;                        // Marketing & strategic supply
 
     uint256 public angelAmountRemaining;                   // Amount of private angels tokens remaining at a given time
-    uint256 public earlyBirdsAmountRemaining;              // Amount of early birds tokens remaining at a given time
     uint256 public icoStartsAt;                            // Crowdsale ending timestamp
     uint256 public icoEndsAt;                              // Crowdsale ending timestamp
     uint256 public redTeamLockingPeriod;                   // Locking period for Red team's supply
+    uint256 public angelLockingPeriod;                     // Locking period for Angel's supply
 
     address public crowdfundAddress;                       // Crowdfunding contract address
     address public redTeamAddress;                         // Red team address
@@ -160,7 +160,6 @@ contract REDToken is ERC20, Ownable {
         marketingSupply     =  20000000 * 1e18;             //  10% -  20 million RED for covering marketing and strategic expenses
 
         angelAmountRemaining = angelSupply;                 // Decreased over the course of the private angel sale
-        earlyBirdsAmountRemaining = earlyBirdsSupply;       // Decreased over the course of the early birds sale
         redTeamAddress       = 0x31aa507c140E012d0DcAf041d482e04F36323B03;       // Red Team address
         foundationAddress    = 0x93e3AF42939C163Ee4146F63646Fb4C286CDbFeC;       // Foundation/Community address
         marketingAddress     = 0x0;                         // Marketing/Strategic address
@@ -171,7 +170,6 @@ contract REDToken is ERC20, Ownable {
         redTeamLockingPeriod = icoEndsAt.add(365 days);     // 12 months locking period
 
         addToBalance(foundationAddress, foundationSupply);
-        //addToBalance(marketingAddress, marketingSupply);
 
         stage = icoStages.Ready;                            // Initializes state
     }
@@ -182,6 +180,7 @@ contract REDToken is ERC20, Ownable {
     function startCrowdfund() external onlyCrowdfund notBeforeCrowdfundStarts returns(bool) {
         require(stage == icoStages.Ready);
         stage = icoStages.EarlyBirds;
+        addToBalance(crowdfundAddress, earlyBirdsSupply);
         return true;
     }
 
@@ -198,7 +197,6 @@ contract REDToken is ERC20, Ownable {
     function setCrowdfundAddress(address _crowdfundAddress) external onlyOwner nonZeroAddress(_crowdfundAddress) {
         require(crowdfundAddress == 0x0);
         crowdfundAddress = _crowdfundAddress;
-        addToBalance(crowdfundAddress, earlyBirdsAmountRemaining + publicSupply);
     }
 
     // -------------------------------------------------
@@ -228,11 +226,8 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     function finalizeEarlyBirds() external onlyOwner returns (bool success) {
         require(stage == icoStages.EarlyBirds);
-        uint256 amount = earlyBirdsAmountRemaining;
-        if (amount != 0) {
-            earlyBirdsAmountRemaining = 0;
-            addToBalance(crowdfundAddress, amount);
-        }
+        uint256 amount = balanceOf(crowdfundAddress);
+        addToBalance(crowdfundAddress, publicSupply);
         stage = icoStages.PublicSale;
         EarlyBirdsFinalized(amount);                       // event log
         return true;
