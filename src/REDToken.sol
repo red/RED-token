@@ -84,6 +84,11 @@ contract REDToken is ERC20, Ownable {
         _;
     }
 
+    modifier checkAngelsLockingPeriod() {                  // Ensures locking period is over
+        require(now >= angelLockingPeriod);
+        _;
+    }
+
     modifier onlyCrowdfund() {                             // Ensures only crowdfund can call the function
         require(msg.sender == crowdfundAddress);
         _;
@@ -272,7 +277,7 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     // Function to unlock 20% RED to private angels investors
     // -------------------------------------------------
-    function partialUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner returns (bool success) {
+    function partialUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner notBeforeCrowdfundEnds returns (bool success) {
         uint256 amount;
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
             amount = angels[_accountHolder].mul(20).div(100);
@@ -285,7 +290,7 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     // Function to unlock all remaining RED to private angels investors (after 3 months)
     // -------------------------------------------------
-    function fullUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner returns (bool success) {
+    function fullUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner checkAngelsLockingPeriod returns (bool success) {
         uint256 amount;
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
             amount = angels[_accountHolder];
