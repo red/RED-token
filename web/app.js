@@ -32,8 +32,14 @@ class App {
     }
 
     async logSymbol() {
-        const sym = this.web3.utils.hexToUtf8(await this.red.methods.symbol().call())
-        L('Token symbol:', sym)
-        return sym
+        try {
+            // If the token symbol is `bytes32` it can be converted to string like this:
+            //   const sym = this.web3.utils.hexToUtf8(await this.red.methods.symbol().call())
+            const sym = await this.red.methods.symbol().call()
+            L('Token symbol:', sym)
+            return sym
+        } catch (e) {
+            console.error(e)
+        }
     }
 }
