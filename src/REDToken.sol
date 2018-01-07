@@ -166,8 +166,8 @@ contract REDToken is ERC20, Ownable {
         foundationAddress    = 0x93e3AF42939C163Ee4146F63646Fb4C286CDbFeC;       // Foundation/Community address
         marketingAddress     = 0x0;                         // Marketing/Strategic address
 
-        icoStartsAt          = 1515405600;                  // Jan 8th 2018, 18:00, GMT+8
-        icoEndsAt            = 1517824800;                  // Feb 5th 2018, 18:00, GMT+8
+        icoStartsAt          = 1515398400;                  // Jan 8th 2018, 16:00, GMT+8
+        icoEndsAt            = 1517385600;                  // Jan 31th 2018, 16:00, GMT+8
         angelLockingPeriod   = icoEndsAt.add(90 days);      //  3 months locking period
         redTeamLockingPeriod = icoEndsAt.add(365 days);     // 12 months locking period
 
