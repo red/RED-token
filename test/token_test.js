@@ -29,7 +29,7 @@ describe('Contract', function () {
 
     before(async () => {
         // Instantiate clients to an empty in-memory blockchain
-        web3 = ganacheWeb3({time: icoStartDate})
+        web3 = ganacheWeb3({time: icoStartDate, total_accounts: 20})
         snaps = []
 
         // Provide synchronous access to test accounts
@@ -297,39 +297,6 @@ describe('Contract', function () {
             await web3.evm.increaseTime(86400 * 275)         // andvance 275 days
             await send(red, DEPLOYER, 'releaseRedTeamTokens')
             expect(await balance(red, TEAM)).eq(toWei('30000000'))
-
-            // TBD: some security tests
-            /* -- Crowd Fund Contract -- */
-            // Others except DEPLOYER call this function will fail
-            // openCrowdfund
-
-            // Others except DEPLOYER call this function will fail
-            // closeCrowdfund
-
-            /* -- Token Contract -- */
-            // Others except CrowdFund contract call this function will fail
-            // startCrowdfund
-
-            // Others except CrowdFund contract call this function will fail
-            // transferFromCrowdfund
-
-            // Others except CrowdFund contract call this function will fail
-            // finalizeCrowdfund
-
-            // Others except DEPLOYER call this function will fail
-            // setCrowdfundAddress
-
-            // Others except DEPLOYER call this function will fail
-            // releaseRedTeamTokens
-
-            // Others except DEPLOYER call this function will fail
-            // finalizePresale
-
-            // Others except DEPLOYER call this function will fail
-            // deliverPresaleRedAccounts
-
-            // Others except DEPLOYER call this function will fail
-            // changeRedTeamAddress
         })
     })
 })
