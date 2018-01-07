@@ -264,10 +264,11 @@ contract REDToken is ERC20, Ownable {
 
     // -------------------------------------------------
     // Function to reserve RED to private angels investors (initially locked)
+    // the amount of RED is in Wei
     // -------------------------------------------------
     function deliverAngelsREDAccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner returns (bool success) {
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            deliverAngelsREDBalance(_batchOfAddresses[i], _amountOfRED[i] * 1e18);
+            deliverAngelsREDBalance(_batchOfAddresses[i], _amountOfRED[i]);
         }
         return true;
     }

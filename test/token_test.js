@@ -88,12 +88,12 @@ describe('Contract', function () {
         it('workflow', async () => {
             // angel round
             const angelsAddr = [ANGEL1, ANGEL2]
-            const amounts = [1000, 2000]
-            await send(red, DEPLOYER, 'deliverAngelsREDAccounts', angelsAddr, amounts)      
+            const amounts = [toWei('1000'), toWei('2000')]
+            await send(red, DEPLOYER, 'deliverAngelsREDAccounts', angelsAddr, amounts)
             expect(await balance(red, ANGEL1)).eq(toWei('1000'))
             expect(await balance(red, ANGEL2)).eq(toWei('2000'))  
 
-            // !!! Others except DEPLOYER call this function will fail !!!
+            // !!! Others except DEPLOYER call changeWalletAddress will fail !!!
             let walletAddr = await redCrowdfund.methods.wallet().call()
             try {
                 await send(redCrowdfund, INVESTOR3, 'changeWalletAddress', ZERO_ADDR)
@@ -107,6 +107,12 @@ describe('Contract', function () {
 
             // set wallet address back
             await send(redCrowdfund, DEPLOYER, 'changeWalletAddress', walletAddr)
+
+            // !!! Others except DEPLOYER call openCrowdfund will fail !!!
+            try {
+                await send(redCrowdfund, INVESTOR3, 'openCrowdfund')
+            } catch (e) {}
+            expect(await red.methods.isEarlyBirdsStage().call()).equal(false)
 
             // buying before early bird round will fail
             try {
@@ -183,7 +189,15 @@ describe('Contract', function () {
 
             // close ICO
             await web3.evm.increaseTime(604800 * 4)         // 4 weeks
+
+            // !!! Others except DEPLOYER call closeCrowdfund will fail !!!
+            try {
+                await send(redCrowdfund, INVESTOR2, 'closeCrowdfund')
+            } catch (e) {}
+            expect(await redCrowdfund.methods.isOpen().call()).equal(true)
+
             await send(redCrowdfund, DEPLOYER, 'closeCrowdfund')
+            expect(await redCrowdfund.methods.isOpen().call()).equal(false)
 
             // any buying will fail
             try {
