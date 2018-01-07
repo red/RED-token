@@ -39,7 +39,7 @@ class App {
 
     async loadContracts() {
         this._red = await this.loadContract('REDToken.json', MAINNET_RED_ADDR)
-        this._redCrowdfund = await this.loadContract('REDCrowdfund.json', '0x0') // Don't use the address from the file
+        // this._redCrowdfund = await this.loadContract('REDCrowdfund.json')
     }
 
     async logSymbol() {
