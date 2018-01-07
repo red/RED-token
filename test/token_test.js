@@ -20,6 +20,7 @@ const solcInput = require('../solc-input.json')
 const deploy = require('./deploy')
 
 describe('Contract', function () {
+    const earlyBirdsSupply = toWei('48000000', 'ether')
     const icoStartDate = new Date(1515405600/* seconds */ * 1000) // Jan 8th 2018, 18:00, GMT+8
     let web3, snaps
     let accounts, DEPLOYER, WALLET, TEAM, BIZ
@@ -42,7 +43,9 @@ describe('Contract', function () {
             INVESTOR2,
             INVESTOR3,
             ANGEL1,
-            ANGEL2
+            ANGEL2,
+            SOME_RANDOM_GUY,
+            SOME_RANDOM_ADDRESS
         ] = accounts = await web3.eth.getAccounts()
 
         // Deploy contracts
@@ -58,23 +61,68 @@ describe('Contract', function () {
         await web3.evm.revert(snaps.pop())
     })
 
-    describe('Blockchain time', () => {
-        it('is roughly the ICO start time', async () => {
-            icoStart /* seconds */ = icoStartDate.getTime() / 1000
-            expect(await now(web3)).within(icoStart, icoStart + 3)
-        })
-    })
+    describe('Crowfund', () => {
 
-    describe('Angel round', () => {
-        it('does NOT cost more than 100 USD for the deployer', async () => {
+        it('deployment does NOT cost more than 100 USD for the deployer', async () => {
             // Source: https://coinmarketcap.com/currencies/ethereum/
             USD_PER_ETH = toBN(1068)
-            const initial = toWei(toBN(100))
+            const initial = toWei(toBN(100 /* ether */))
             const current = await balance(web3, DEPLOYER)
             const spent = initial.sub(toBN(current))
             const deploymentCost = (fromWei(spent)) * USD_PER_ETH
-            console.log('      Deployment cost:', deploymentCost)
-            expect(deploymentCost).to.be.below(100)
+            console.log(`        (deployment cost: ${deploymentCost} USD)`)
+            expect(deploymentCost).to.be.below(100 /* USD */)
+        })
+
+        it('blockchain time is roughly the ICO start time', async () => {
+            icoStart /* seconds */ = icoStartDate.getTime() / 1000
+            expect(await now(web3)).within(icoStart, icoStart + 3)
+        })
+
+        it('wallet can be changed by DEPLOYER', async () => {
+            await expectNoAsyncThrow(async () =>
+                await send(redCrowdfund, DEPLOYER, 'changeWalletAddress', SOME_RANDOM_ADDRESS))
+            expect(await call(redCrowdfund, 'wallet')).eq(SOME_RANDOM_ADDRESS)
+        })
+
+        it('wallet can NOT be changed by other than the DEPLOYER', async () => {
+            const NOT_THE_DEPLOYER = SOME_RANDOM_GUY
+            await expectThrow(async () =>
+                send(redCrowdfund, NOT_THE_DEPLOYER, 'changeWalletAddress', SOME_RANDOM_ADDRESS))
+        })
+
+        describe('angel round', () => {
+            it('is not early bird stage', async () => {
+                expect(await call(red, 'isEarlyBirdsStage')).to.be.false
+            })
+
+            it('supply is zero', async () => {
+                expect(await balance(red, redCrowdfund.options.address)).eq(toWei('0'))
+            })
+
+            it('prohibits investing', async () => {
+                await expectThrow(async () =>
+                    buy(web3, INVESTOR1, redCrowdfund, '1'))
+                expect(await balance(red, INVESTOR1)).eq(toWei('0'))
+            })
+        })
+
+        describe('early bird round', () => {
+            it('can be opened by DEPLOYER', async () => {
+                await expectNoAsyncThrow(async () =>
+                    await send(redCrowdfund, DEPLOYER, 'openCrowdfund'))
+                expect(await call(red, 'isEarlyBirdsStage')).to.be.true
+            })
+
+            it('can NOT be opened by other than the DEPLOYER', async () => {
+                await expectThrow(async () =>
+                    send(redCrowdfund, SOME_RANDOM_GUY, 'openCrowdfund'))
+            })
+
+            it('supply is `earlyBirdsSupply`', async () => {
+                await send(redCrowdfund, DEPLOYER, 'openCrowdfund')
+                expect(await balance(red, redCrowdfund.options.address)).eq(earlyBirdsSupply)
+            })
         })
     })
 
@@ -96,35 +144,8 @@ describe('Contract', function () {
             expect(await balance(red, ANGEL2)).eq(toWei('2000'))
             expect(await balance(red, INVESTOR1)).eq(toWei('0'))
 
-            // !!! Others except DEPLOYER call changeWalletAddress will fail !!!
-            let walletAddr = await call(redCrowdfund, 'wallet')
-            await expectThrow(async () =>
-                send(redCrowdfund, INVESTOR3, 'changeWalletAddress', ZERO_ADDR))
-
-            let walletAddrNew = await call(redCrowdfund, 'wallet')
-            expect(walletAddr).eq(walletAddrNew)
-
-            await send(redCrowdfund, DEPLOYER, 'changeWalletAddress', ZERO_ADDR)
-            walletAddrNew = await call(redCrowdfund, 'wallet')
-            expect(walletAddrNew).eq(ZERO_ADDR)
-
-            // set wallet address back
-            await send(redCrowdfund, DEPLOYER, 'changeWalletAddress', walletAddr)
-
-            // !!! Others except DEPLOYER call openCrowdfund will fail !!!
-            await expectThrow(async () =>
-                send(redCrowdfund, INVESTOR3, 'openCrowdfund'))
-            expect(await call(red, 'isEarlyBirdsStage')).equal(false)
-            expect(await balance(red, redCrowdfund.options.address)).eq(toWei('0'))
-
-            // buying before early bird round will fail
-            await expectThrow(async () =>
-                buy(web3, INVESTOR1, redCrowdfund, '1'))
-            expect(await balance(red, INVESTOR1)).eq(toWei('0'))
-
             // open early bird round
             await send(redCrowdfund, DEPLOYER, 'openCrowdfund')
-            expect(await balance(red, redCrowdfund.options.address)).eq(toWei('48000000'))
 
             await expectThrow(async () =>
                 send(red, INVESTOR3, 'deliverAngelsREDAccounts', angelsAddr, amounts))
