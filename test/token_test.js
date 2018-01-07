@@ -22,8 +22,9 @@ const deploy = require('./deploy')
 describe('Contract', function () {
     const icoStartDate = new Date(1515405600/* seconds */ * 1000) // Jan 8th 2018, 18:00, GMT+8
     let web3, snaps
-    let accounts, DEPLOYER, WALLET, TEAM, FOUNDATION, BIZ
+    let accounts, DEPLOYER, WALLET, TEAM, BIZ
     let INVESTOR1, INVESTOR2, INVESTOR3, ANGEL1, ANGEL2
+    let FOUNDATION
     let red, redCrowdfund
 
     before(async () => {
@@ -36,7 +37,6 @@ describe('Contract', function () {
             DEPLOYER,
             WALLET,
             TEAM,
-            FOUNDATION,
             BIZ,
             INVESTOR1,
             INVESTOR2,
@@ -47,6 +47,7 @@ describe('Contract', function () {
 
         // Deploy contracts
         ;({red, redCrowdfund} = await deploy.base(web3, solcJSON(solcInput), accounts))
+        FOUNDATION = await call(red, 'foundationAddress')
     })
 
     beforeEach(async () => {
@@ -79,24 +80,20 @@ describe('Contract', function () {
 
     describe('Workflow Test', () => {
         it('is token deployed', async () => {
-            let symbol = await call(red, 'symbol')
-            expect(symbol).equal('RED')
+            expect(await call(red, 'symbol')).equal('RED')
         })
 
         it('is crowdfund deployed', async () => {
-            let token = await call(redCrowdfund, 'RED')
-            expect(token).equal(red.options.address)
+            expect(await call(redCrowdfund, 'RED')).equal(red.options.address)
         })
 
         it('workflow', async () => {
-            FOUNDATION = await call(red, 'foundationAddress')
-
             // angel round
             const angelsAddr = [ANGEL1, ANGEL2]
             const amounts = [toWei('1000'), toWei('2000')]
             await send(red, DEPLOYER, 'deliverAngelsREDAccounts', angelsAddr, amounts)
             expect(await balance(red, ANGEL1)).eq(toWei('1000'))
-            expect(await balance(red, ANGEL2)).eq(toWei('2000'))  
+            expect(await balance(red, ANGEL2)).eq(toWei('2000'))
             expect(await balance(red, INVESTOR1)).eq(toWei('0'))
 
             // !!! Others except DEPLOYER call changeWalletAddress will fail !!!
@@ -214,7 +211,7 @@ describe('Contract', function () {
             expect(await balance(red, INVESTOR2)).eq(toWei('8000'))
 
             await expectThrow(async () =>
-               send(redCrowdfund, DEPLOYER, 'closeCrowdfund'))
+                send(redCrowdfund, DEPLOYER, 'closeCrowdfund'))
             expect(await call(redCrowdfund, 'isOpen')).equal(true)
 
             // close ICO
@@ -244,7 +241,7 @@ describe('Contract', function () {
 
             //transferFrom will fail as we didn't do any approve
             await expectThrow(async () =>
-               send(red, INVESTOR3, 'transferFrom', INVESTOR2, INVESTOR1, toWei('300')))
+                send(red, INVESTOR3, 'transferFrom', INVESTOR2, INVESTOR1, toWei('300')))
             expect(await balance(red, INVESTOR1)).eq(toWei('5800'))
             expect(await balance(red, INVESTOR2)).eq(toWei('7700'))
 

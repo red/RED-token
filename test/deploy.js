@@ -5,7 +5,6 @@ const base = async (web3, solcOutput, accounts) => {
         DEPLOYER,
         WALLET,
         TEAM,
-        FOUNDATION,
         BIZ
     ] = accounts
 
