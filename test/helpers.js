@@ -15,7 +15,7 @@ Assertion.addMethod('eq', function (N) {
         N, this._obj)
 })
 
-async function assertThrowsAsync(fn, regExp, message) {
+async function expectAsyncThrow(fn, regExp, message) {
     let f = () => {
     };
     try {
@@ -29,7 +29,7 @@ async function assertThrowsAsync(fn, regExp, message) {
     }
 }
 
-async function assertNotThrowsAsync(fn, regExp, message) {
+async function expectNoAsyncThrow(fn, regExp, message) {
     let f = () => {
     };
     try {
@@ -44,8 +44,8 @@ async function assertNotThrowsAsync(fn, regExp, message) {
     }
 }
 
-async function assertContractThrows(fn) {
-    await assertThrowsAsync(fn, /invalid opcode|VM Exception/, 'Contract call should fail')
+async function expectThrow(fn) {
+    return await expectAsyncThrow(fn, /invalid opcode|VM Exception/, 'Contract call should fail')
 }
 
 async function balance(web3_or_eip20, account) {
@@ -156,7 +156,9 @@ const buy = async (web3, buyer, seller, eth) =>
 
 module.exports = {
     expect,
-    assertContractThrows,
+    expectAsyncThrow,
+    expectNoAsyncThrow,
+    expectThrow,
     balance,
     ZERO_ADDR: padLeft(0x0, 40),
     BN,
