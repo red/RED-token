@@ -6,10 +6,7 @@ const base = async (web3, solcOutput, accounts) => {
         WALLET,
         TEAM,
         FOUNDATION,
-        BIZ,
-        INVESTOR1,
-        INVESTOR2,
-        INVESTOR3
+        BIZ
     ] = accounts
 
     // Merge all contracts across all files into one registry
@@ -44,7 +41,6 @@ const base = async (web3, solcOutput, accounts) => {
     const redCrowdfund = await deploy(REDCrowdfund, red.options.address)
 
     await send(red, DEPLOYER, 'setCrowdfundAddress', redCrowdfund.options.address)
-    await send(red, DEPLOYER, 'changeFoundationAddress', FOUNDATION)
     await send(red, DEPLOYER, 'changeMarketingAddress', BIZ)
     await send(red, DEPLOYER, 'changeRedTeamAddress', TEAM)
     await send(redCrowdfund, DEPLOYER, 'changeWalletAddress', WALLET)

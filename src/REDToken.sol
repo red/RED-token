@@ -71,7 +71,7 @@ contract REDToken is ERC20, Ownable {
         _;
     }
 
-    modifier notBeforeCrowdfundStarts(){                   // Ensures actions can only happen after crowdfund ends
+    modifier onlyDuringCrowdfund(){                   // Ensures actions can only happen after crowdfund ends
         require((now >= icoStartsAt) && (now < icoEndsAt));
         _;
     }
@@ -179,7 +179,7 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     // Opens early birds sale
     // -------------------------------------------------
-    function startCrowdfund() external onlyCrowdfund notBeforeCrowdfundStarts returns(bool) {
+    function startCrowdfund() external onlyCrowdfund onlyDuringCrowdfund returns(bool) {
         require(stage == icoStages.Ready);
         stage = icoStages.EarlyBirds;
         addToBalance(crowdfundAddress, earlyBirdsSupply);
@@ -276,17 +276,6 @@ contract REDToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
-    // Function to reserve RED to private angels investors (initially locked)
-    // the amount of RED is in Wei
-    // -------------------------------------------------
-    function deliverAngelsREDAccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner returns (bool success) {
-        for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            deliverAngelsREDBalance(_batchOfAddresses[i], _amountOfRED[i]);
-        }
-        return true;
-    }
-
-    // -------------------------------------------------
     // Function to unlock 20% RED to private angels investors
     // -------------------------------------------------
     function partialUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner notBeforeCrowdfundEnds returns (bool success) {
@@ -318,8 +307,17 @@ contract REDToken is ERC20, Ownable {
         return true;
     }
 
+    // -------------------------------------------------
+    // Function to reserve RED to private angels investors (initially locked)
+    // the amount of RED is in Wei
+    // -------------------------------------------------
+    function deliverAngelsREDAccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner onlyDuringCrowdfund returns (bool success) {
+        for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
+            deliverAngelsREDBalance(_batchOfAddresses[i], _amountOfRED[i]);
+        }
+        return true;
+    }
 /*----------------- Helper functions -----------------*/
-
     // -------------------------------------------------
     // If one address has contributed more than once,
     // the contributions will be aggregated
@@ -343,15 +341,6 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     function decrementBalance(address _address, uint _amount) internal {
         accounts[_address] = accounts[_address].sub(_amount);
-    }
-
-/*-------------- For testing ------------------------*/
-/*-------------- For testing ------------------------*/
-/*------ Remove Those functions before deploying on mainnet ---------*/
-/*-------------- For testing ------------------------*/
-/*-------------- For testing ------------------------*/
-    function changeFoundationAddress(address _wallet) public onlyOwner {
-        foundationAddress = _wallet;
     }
 }
 
