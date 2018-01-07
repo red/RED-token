@@ -39,6 +39,8 @@ contract REDToken is ERC20, Ownable {
     address public foundationAddress;                      // Foundation address
     address public marketingAddress;                       // Private equity address
 
+    bool public unlock20Done = false;                      // Allows the 20% unlocking for angels only once
+
     enum icoStages {
         Ready,                                             // Initial state on contract's creation
         EarlyBirds,                                        // Early birds state
@@ -277,6 +279,7 @@ contract REDToken is ERC20, Ownable {
     // Function to unlock 20% RED to private angels investors
     // -------------------------------------------------
     function partialUnlockAngelsAccounts(address[] _batchOfAddresses) external onlyOwner notBeforeCrowdfundEnds returns (bool success) {
+        require(unlock20Done == false);
         uint256 amount;
         address holder;
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
@@ -285,6 +288,7 @@ contract REDToken is ERC20, Ownable {
             angels[holder] = angels[holder].sub(amount);
             addToBalance(holder, amount);
         }
+        unlock20Done = true;
         return true;
     }
 
