@@ -99,7 +99,7 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     // Transfers amount to address
     // -------------------------------------------------
-    function transfer(address _to, uint256 _amount) public notBeforeCrowdfundEnds returns (bool success) {
+    function transfer(address _to, uint256 _amount) public returns (bool success) {
         require(balanceOf(msg.sender) >= _amount);
         addToBalance(_to, _amount);
         decrementBalance(msg.sender, _amount);
@@ -267,7 +267,7 @@ contract REDToken is ERC20, Ownable {
     // -------------------------------------------------
     function deliverAngelsREDAccounts(address[] _batchOfAddresses, uint[] _amountOfRED) external onlyOwner returns (bool success) {
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            deliverAngelsREDBalance(_batchOfAddresses[i], _amountOfRED[i]);
+            deliverAngelsREDBalance(_batchOfAddresses[i], _amountOfRED[i] * 1e18);
         }
         return true;
     }
