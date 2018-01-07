@@ -11,6 +11,7 @@ const {
     logAccounts,
     now,
     send,
+    call,
     buy
 } = require('./helpers')
 const solcInput = require('../solc-input.json')
@@ -76,17 +77,17 @@ describe('Contract', function () {
 
     describe('Workflow Test', () => {
         it('is token deployed', async () => {
-            let symbol = await red.methods.symbol().call()
+            let symbol = await call(red, 'symbol')
             expect(symbol).equal('RED')
         })
 
         it('is crowdfund deployed', async () => {
-            let token = await redCrowdfund.methods.RED().call()
+            let token = await call(redCrowdfund, 'RED')
             expect(token).equal(red.options.address)
         })
 
         it('workflow', async () => {
-            FOUNDATION = await red.methods.foundationAddress().call()
+            FOUNDATION = await call(red, 'foundationAddress')
 
             // angel round
             const angelsAddr = [ANGEL1, ANGEL2]
@@ -97,15 +98,15 @@ describe('Contract', function () {
             expect(await balance(red, INVESTOR1)).eq(toWei('0'))
 
             // !!! Others except DEPLOYER call changeWalletAddress will fail !!!
-            let walletAddr = await redCrowdfund.methods.wallet().call()
+            let walletAddr = await call(redCrowdfund, 'wallet')
             try {
                 await send(redCrowdfund, INVESTOR3, 'changeWalletAddress', ZERO_ADDR)
             } catch (error) {}
-            let walletAddrNew = await redCrowdfund.methods.wallet().call()
+            let walletAddrNew = await call(redCrowdfund, 'wallet')
             expect(walletAddr).eq(walletAddrNew)
 
             await send(redCrowdfund, DEPLOYER, 'changeWalletAddress', ZERO_ADDR)
-            walletAddrNew = await redCrowdfund.methods.wallet().call()
+            walletAddrNew = await call(redCrowdfund, 'wallet')
             expect(walletAddrNew).eq(ZERO_ADDR)
 
             // set wallet address back
@@ -115,7 +116,7 @@ describe('Contract', function () {
             try {
                 await send(redCrowdfund, INVESTOR3, 'openCrowdfund')
             } catch (e) {}
-            expect(await red.methods.isEarlyBirdsStage().call()).equal(false)
+            expect(await call(red, 'isEarlyBirdsStage')).equal(false)
             expect(await balance(red, redCrowdfund.options.address)).eq(toWei('0'))
 
             // buying before early bird round will fail
@@ -139,7 +140,7 @@ describe('Contract', function () {
             await send(red, DEPLOYER, 'deliverAngelsREDAccounts', angelsAddr, amounts)
             expect(await balance(red, ANGEL1)).eq(toWei('2000'))
             expect(await balance(red, ANGEL2)).eq(toWei('4000'))
-            expect(await red.methods.angelAmountRemaining().call()).eq(toWei('19994000'))
+            expect(await call(red, 'angelAmountRemaining')).eq(toWei('19994000'))
 
             // add white list
             const whitelist = [INVESTOR1, INVESTOR2]
@@ -222,7 +223,7 @@ describe('Contract', function () {
             try {
                await send(redCrowdfund, DEPLOYER, 'closeCrowdfund')
             } catch (e) {}
-            expect(await redCrowdfund.methods.isOpen().call()).equal(true)
+            expect(await call(redCrowdfund, 'isOpen')).equal(true)
 
             // close ICO
             await web3.evm.increaseTime(604800 * 4)         // 4 weeks
@@ -231,10 +232,10 @@ describe('Contract', function () {
             try {
                 await send(redCrowdfund, INVESTOR2, 'closeCrowdfund')
             } catch (e) {}
-            expect(await redCrowdfund.methods.isOpen().call()).equal(true)
+            expect(await call(redCrowdfund, 'isOpen')).equal(true)
 
             await send(redCrowdfund, DEPLOYER, 'closeCrowdfund')
-            expect(await redCrowdfund.methods.isOpen().call()).equal(false)
+            expect(await call(redCrowdfund, 'isOpen')).equal(false)
 
             // check balance of the foundation
             expect(await balance(red, FOUNDATION)).eq(toWei('129981250'))
