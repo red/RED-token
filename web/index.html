@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>RED ICO contracts interface</title>
+</head>
+
+<body>
+
+<h1>RED ICO contracts interface</h1>
+<p>See the JavaScript console for results!</p>
+<p>You can try evaluating:</p>
+<blockquote>
+    <code>
+        console.log(await app.logSymbol())
+    </code>
+</blockquote>
+
+<script src="web3.js"></script>
+<script src="app.js"></script>
+<script>
+    let app
+    window.addEventListener('load', function () {
+        app = new App(window.Web3, window.web3.currentProvider)
+    })
+</script>
+
+</body>
+</html>

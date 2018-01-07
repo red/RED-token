@@ -60,3 +60,6 @@ typings/
 .env
 
 out/*
+
+# Local development blockchain data
+data/*
