@@ -18,12 +18,25 @@
     </code>
 </blockquote>
 
+<table>
+    <tr>
+        <th>Symbol</th>
+        <td id="symbol"></td>
+    </tr>
+    <tr>
+        <th>angelAmountRemaining</th>
+        <td id="angelAmountRemaining"></td>
+    </tr>
+</table>
 <script src="web3.js"></script>
 <script src="app.js"></script>
 <script>
     let app
-    window.addEventListener('load', function () {
+    window.addEventListener('load', async function () {
         app = new App(window.Web3, window.web3.currentProvider)
+        await app.loadContracts()
+        $('#symbol').textContent = await call(app.red, 'symbol')
+        $('#angelAmountRemaining').textContent = fromWei(await call(app.red, 'angelAmountRemaining'), 'ether')
     })
 </script>
 
