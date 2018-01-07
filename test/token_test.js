@@ -62,7 +62,6 @@ describe('Contract', function () {
     })
 
     describe('Crowfund', () => {
-
         it('deployment does NOT cost more than 100 USD for the deployer', async () => {
             // Source: https://coinmarketcap.com/currencies/ethereum/
             USD_PER_ETH = toBN(1068)
@@ -72,6 +71,14 @@ describe('Contract', function () {
             const deploymentCost = (fromWei(spent)) * USD_PER_ETH
             console.log(`        (deployment cost: ${deploymentCost} USD)`)
             expect(deploymentCost).to.be.below(100 /* USD */)
+        })
+
+        it('contract is deployed', async () => {
+            expect(await call(redCrowdfund, 'RED')).equal(red.options.address)
+        })
+
+        it('RED token is deployed', async () => {
+            expect(await call(red, 'symbol')).equal('RED')
         })
 
         it('blockchain time is roughly the ICO start time', async () => {
@@ -91,50 +98,65 @@ describe('Contract', function () {
                 send(redCrowdfund, NOT_THE_DEPLOYER, 'changeWalletAddress', SOME_RANDOM_ADDRESS))
         })
 
-        describe('angel round', () => {
-            it('is not early bird stage', async () => {
-                expect(await call(red, 'isEarlyBirdsStage')).to.be.false
-            })
+        describe('angel investments', () => {
+            it('can be accepted by the DEPLOYER in any phase', async () => {
+                const angelsAddr = [ANGEL1, ANGEL2]
+                const amounts = [toWei('1000'), toWei('2000')]
 
-            it('supply is zero', async () => {
-                expect(await balance(red, redCrowdfund.options.address)).eq(toWei('0'))
-            })
+                await send(red, DEPLOYER, 'deliverAngelsREDAccounts', angelsAddr, amounts)
+                expect(await balance(red, ANGEL1)).eq(toWei('1000'))
+                expect(await balance(red, ANGEL2)).eq(toWei('2000'))
 
-            it('prohibits investing', async () => {
-                await expectThrow(async () =>
-                    buy(web3, INVESTOR1, redCrowdfund, '1'))
-                expect(await balance(red, INVESTOR1)).eq(toWei('0'))
+                send(redCrowdfund, DEPLOYER, 'openCrowdfund')
+
+                await send(red, DEPLOYER, 'deliverAngelsREDAccounts', angelsAddr, amounts)
+                expect(await balance(red, ANGEL1)).eq(toWei('2000'))
+                expect(await balance(red, ANGEL2)).eq(toWei('4000'))
+                expect(await call(red, 'angelAmountRemaining')).eq(toWei('19994000'))
             })
         })
 
         describe('early bird round', () => {
-            it('can be opened by DEPLOYER', async () => {
-                await expectNoAsyncThrow(async () =>
-                    await send(redCrowdfund, DEPLOYER, 'openCrowdfund'))
-                expect(await call(red, 'isEarlyBirdsStage')).to.be.true
+            describe('when closed', () => {
+                it('anyone can see it being closed', async () => {
+                    expect(await call(red, 'isEarlyBirdsStage')).to.be.false
+                })
+
+                it('can be opened by DEPLOYER', async () => {
+                    await expectNoAsyncThrow(async () =>
+                        send(redCrowdfund, DEPLOYER, 'openCrowdfund'))
+                    expect(await call(red, 'isEarlyBirdsStage')).to.be.true
+                })
+
+                it('can NOT be opened by other than the DEPLOYER', async () => {
+                    await expectThrow(async () =>
+                        send(redCrowdfund, SOME_RANDOM_GUY, 'openCrowdfund'))
+                })
+
+                it('supply is zero', async () => {
+                    expect(await balance(red, redCrowdfund.options.address)).eq(toWei('0'))
+                })
+
+                it('prohibits external investment', async () => {
+                    await expectThrow(async () =>
+                        buy(web3, INVESTOR1, redCrowdfund, '1'))
+                    expect(await balance(red, INVESTOR1)).eq(toWei('0'))
+                })
             })
 
-            it('can NOT be opened by other than the DEPLOYER', async () => {
-                await expectThrow(async () =>
-                    send(redCrowdfund, SOME_RANDOM_GUY, 'openCrowdfund'))
-            })
+            describe('when opened', () => {
+                beforeEach(async () => {
+                    await send(redCrowdfund, DEPLOYER, 'openCrowdfund')
+                })
 
-            it('supply is `earlyBirdsSupply`', async () => {
-                await send(redCrowdfund, DEPLOYER, 'openCrowdfund')
-                expect(await balance(red, redCrowdfund.options.address)).eq(earlyBirdsSupply)
+                it(`supply is ${fromWei(earlyBirdsSupply, 'ether')} RED`, async () => {
+                    expect(await balance(red, redCrowdfund.options.address)).eq(earlyBirdsSupply)
+                })
             })
         })
     })
 
     describe('Workflow Test', () => {
-        it('is token deployed', async () => {
-            expect(await call(red, 'symbol')).equal('RED')
-        })
-
-        it('is crowdfund deployed', async () => {
-            expect(await call(redCrowdfund, 'RED')).equal(red.options.address)
-        })
-
         it('workflow', async () => {
             // angel round
             const angelsAddr = [ANGEL1, ANGEL2]
@@ -142,7 +164,6 @@ describe('Contract', function () {
             await send(red, DEPLOYER, 'deliverAngelsREDAccounts', angelsAddr, amounts)
             expect(await balance(red, ANGEL1)).eq(toWei('1000'))
             expect(await balance(red, ANGEL2)).eq(toWei('2000'))
-            expect(await balance(red, INVESTOR1)).eq(toWei('0'))
 
             // open early bird round
             await send(redCrowdfund, DEPLOYER, 'openCrowdfund')
