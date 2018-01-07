@@ -113,6 +113,7 @@ describe('Contract', function () {
                 await send(redCrowdfund, INVESTOR3, 'openCrowdfund')
             } catch (e) {}
             expect(await red.methods.isEarlyBirdsStage().call()).equal(false)
+            expect(await balance(red, redCrowdfund.options.address)).eq(toWei('0'))
 
             // buying before early bird round will fail
             try {
@@ -123,6 +124,13 @@ describe('Contract', function () {
 
             // open early bird round
             await send(redCrowdfund, DEPLOYER, 'openCrowdfund')
+            expect(await balance(red, redCrowdfund.options.address)).eq(toWei('48000000'))
+
+            // angels buying
+            await send(red, DEPLOYER, 'deliverAngelsREDAccounts', angelsAddr, amounts)
+            expect(await balance(red, ANGEL1)).eq(toWei('2000'))
+            expect(await balance(red, ANGEL2)).eq(toWei('4000'))
+            expect(await red.methods.angelAmountRemaining().call()).eq(toWei('19994000'))
 
             // add white list
             const whitelist = [INVESTOR1, INVESTOR2]
@@ -161,8 +169,13 @@ describe('Contract', function () {
             expect(await balance(red, INVESTOR3)).eq(toWei('2750'))
             expect(await balance(web3, WALLET)).eq(toWei('105'))
 
-            // close early bird round
+            // relesae marketing supply
+            await send(red, DEPLOYER, 'releaseMarketingTokens')
+            expect(await balance(red, BIZ)).eq(toWei('20000000'))
+
+            // close early bird round, will add public supply
             await send(red, DEPLOYER, 'finalizeEarlyBirds')
+            expect(await balance(red, redCrowdfund.options.address)).eq(toWei('59986250'))
 
             // Open round buy
             await buy(web3, INVESTOR2, redCrowdfund, '1')
@@ -176,8 +189,8 @@ describe('Contract', function () {
                 await send(red, ANGEL2, 'transfer', ANGEL1, toWei('300'))
             } catch (e) {
             }
-            expect(await balance(red, ANGEL1)).eq(toWei('1000'))
-            expect(await balance(red, ANGEL2)).eq(toWei('2000'))
+            expect(await balance(red, ANGEL1)).eq(toWei('2000'))
+            expect(await balance(red, ANGEL2)).eq(toWei('4000'))
 
             // fail case 2: investors
             try {
@@ -198,6 +211,9 @@ describe('Contract', function () {
 
             await send(redCrowdfund, DEPLOYER, 'closeCrowdfund')
             expect(await redCrowdfund.methods.isOpen().call()).equal(false)
+
+            // check balance of the foundation
+            expect(await balance(red, FOUNDATION)).eq(toWei('59983750'))
 
             // any buying will fail
             try {
@@ -236,15 +252,15 @@ describe('Contract', function () {
                 await send(red, ANGEL2, 'transfer', ANGEL1, toWei('300'))
             } catch (e) {
             }
-            expect(await balance(red, ANGEL1)).eq(toWei('1000'))
-            expect(await balance(red, ANGEL2)).eq(toWei('2000'))
+            expect(await balance(red, ANGEL1)).eq(toWei('2000'))
+            expect(await balance(red, ANGEL2)).eq(toWei('4000'))
 
             // unlock 20% RED to angels
             await send(red, DEPLOYER, 'partialUnlockAngelsAccounts', angelsAddr)
             // now angels can transfer some REDs
             await send(red, ANGEL1, 'transfer', ANGEL2, toWei('200'))
-            expect(await balance(red, ANGEL1)).eq(toWei('800'))
-            expect(await balance(red, ANGEL2)).eq(toWei('2200'))
+            expect(await balance(red, ANGEL1)).eq(toWei('1800'))
+            expect(await balance(red, ANGEL2)).eq(toWei('4200'))
 
             // angel 1 unlocked: 1000 * 20% = 200
             // he already transfered all his REDs to angel2
@@ -257,16 +273,16 @@ describe('Contract', function () {
             try {
                 await send(red, ANGEL1, 'transfer', ANGEL2, toWei('1'))
             } catch (e) {}
-            expect(await balance(red, ANGEL1)).eq(toWei('800'))
-            expect(await balance(red, ANGEL2)).eq(toWei('2200'))
+            expect(await balance(red, ANGEL1)).eq(toWei('1799'))
+            expect(await balance(red, ANGEL2)).eq(toWei('4201'))
 
             // unlock all angels tokens
             await web3.evm.increaseTime(86400 * 90)         // 90 days
             await send(red, DEPLOYER, 'fullUnlockAngelsAccounts', angelsAddr)
             // now they can do the tranfer
             await send(red, ANGEL1, 'transfer', ANGEL2, toWei('800'))
-            expect(await balance(red, ANGEL1)).eq(toWei('0'))
-            expect(await balance(red, ANGEL2)).eq(toWei('3000'))
+            expect(await balance(red, ANGEL1)).eq(toWei('999'))
+            expect(await balance(red, ANGEL2)).eq(toWei('5001'))
 
             expect(await balance(red, TEAM)).eq(toWei('0'))
 

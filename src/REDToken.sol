@@ -224,6 +224,17 @@ contract REDToken is ERC20, Ownable {
     }
 
     // -------------------------------------------------
+    // Releases Marketing & strategic supply
+    // -------------------------------------------------
+    function releaseMarketingTokens() external onlyOwner returns(bool success) {
+        require(marketingSupply > 0);
+        addToBalance(marketingAddress, marketingSupply);
+        Transfer(0x0, marketingAddress, marketingSupply);
+        marketingSupply = 0;
+        return true;
+    }
+
+    // -------------------------------------------------
     // Finalizes early birds round. If some RED are left, let them overflow to the crowdfund
     // -------------------------------------------------
     function finalizeEarlyBirds() external onlyOwner returns (bool success) {

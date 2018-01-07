@@ -27,7 +27,7 @@ const base = async (web3, solcOutput, accounts) => {
     const deploy = async (Contract, ...arguments) => {
         const contractDefaultOptions = {
             from: DEPLOYER,
-            gas: 3000000,
+            gas: 4000000,
             name: Contract.NAME
         }
         return new web3.eth.Contract(Contract.abi, contractDefaultOptions)
