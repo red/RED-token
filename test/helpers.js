@@ -25,11 +25,26 @@ async function assertThrowsAsync(fn, regExp, message) {
             throw e
         };
     } finally {
-        chai.assert.throws(f, regExp, message);
+        expect(f).to.throw(regExp, message);
     }
 }
 
-async function assertContractThrows(fn, regExp, txt) {
+async function assertNotThrowsAsync(fn, regExp, message) {
+    let f = () => {
+    };
+    try {
+        await fn();
+
+    } catch (e) {
+        f = () => {
+            throw e
+        }
+    } finally {
+        expect(f).to.not.throw(regExp, message);
+    }
+}
+
+async function assertContractThrows(fn) {
     await assertThrowsAsync(fn, /invalid opcode|VM Exception/, 'Contract call should fail')
 }
 
@@ -120,6 +135,18 @@ const send = async (contract, sender, methodName, ...params) => {
     }
 }
 
+// Call options are assumed to be defaults
+// although {from: sender} might be useful when calling
+// methods which are intended to be transacted
+const call = async (contract, methodName, ...params) =>{
+    const method = contract.methods[methodName]
+    if (method instanceof Function) {
+        return method(...params).call()
+    } else{
+        throw new Error(`${contract.options.name}.${methodName} is undefined`)
+    }
+}
+
 const buy = async (web3, buyer, seller, eth) =>
     web3.eth.sendTransaction({
         from: buyer,
@@ -141,5 +168,6 @@ module.exports = {
     logAccounts,
     now,
     send,
+    call,
     buy
 }
