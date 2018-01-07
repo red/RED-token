@@ -79,8 +79,9 @@ contract REDCrowdfund is Ownable {
     // Opens the crowdfunding
     // -------------------------------------------------
     function openCrowdfund() external onlyOwner returns (bool success) {
-        isOpen = true;
+        require(isOpen == false);
         RED.startCrowdfund();
+        isOpen = true;
         return true;
     }
 
