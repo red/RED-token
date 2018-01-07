@@ -20,7 +20,7 @@ describe('Contract', function () {
     const icoStartDate = new Date(1515405600/* seconds */ * 1000) // Jan 8th 2018, 18:00, GMT+8
     let web3, snaps
     let accounts, DEPLOYER, WALLET, TEAM, FOUNDATION, BIZ
-    let INVESTOR1, INVESTOR2, INVESTOR3
+    let INVESTOR1, INVESTOR2, INVESTOR3, ANGEL1, ANGEL2
     let red, redCrowdfund
 
     before(async () => {
@@ -37,7 +37,9 @@ describe('Contract', function () {
             BIZ,
             INVESTOR1,
             INVESTOR2,
-            INVESTOR3
+            INVESTOR3,
+            ANGEL1,
+            ANGEL2
         ] = accounts = await web3.eth.getAccounts()
 
         // Deploy contracts
@@ -85,26 +87,18 @@ describe('Contract', function () {
 
         it('workflow', async () => {
             // angel round
-            const addresses = [INVESTOR1, INVESTOR2, INVESTOR3]
-            const amounts = [1000, 2000, 3000]
-            await send(red, DEPLOYER, 'deliverAngelsREDAccounts', addresses, amounts)      
-            expect(await balance(red, INVESTOR1)).eq(toWei('1000'))
-            expect(await balance(red, INVESTOR2)).eq(toWei('2000'))
-            expect(await balance(red, INVESTOR3)).eq(toWei('3000'))      
-            // any transfer will fail before the end of ICO
-            try {
-                await send(red, INVESTOR2, 'transfer', INVESTOR1, toWei('300'))
-            } catch (e) {
-            }
-            expect(await balance(red, INVESTOR1)).eq(toWei('1000'))
-            expect(await balance(red, INVESTOR2)).eq(toWei('2000'))
+            const angelsAddr = [ANGEL1, ANGEL2]
+            const amounts = [1000, 2000]
+            await send(red, DEPLOYER, 'deliverAngelsREDAccounts', angelsAddr, amounts)      
+            expect(await balance(red, ANGEL1)).eq(toWei('1000'))
+            expect(await balance(red, ANGEL2)).eq(toWei('2000'))  
 
             // buying before early bird round will fail
             try {
                 await buy(web3, INVESTOR1, redCrowdfund, '1')
             } catch (error) {
             }
-            expect(await balance(red, INVESTOR1)).eq(toWei('1000'))
+            expect(await balance(red, INVESTOR1)).eq(toWei('0'))
 
             // open early bird round
             await send(redCrowdfund, DEPLOYER, 'openCrowdfund')
@@ -117,23 +111,23 @@ describe('Contract', function () {
             try {
                 await buy(web3, INVESTOR3, redCrowdfund, '1')
             } catch (e) {}
-            expect(await balance(red, INVESTOR3)).eq(toWei('3000'))
+            expect(await balance(red, INVESTOR3)).eq(toWei('0'))
 
             // early bird round buy 1
             // early bird round price: 1 ETH = 2750 RED
             await buy(web3, INVESTOR1, redCrowdfund, '1')
-            // 1000 + 2750 = 3750
-            expect(await balance(red, INVESTOR1)).eq(toWei('3750'))
+            // 2750
+            expect(await balance(red, INVESTOR1)).eq(toWei('2750'))
             expect(await balance(web3, WALLET)).eq(toWei('101'))
             await buy(web3, INVESTOR1, redCrowdfund, '1')
-            // 3750 + 2750 = 6500
-            expect(await balance(red, INVESTOR1)).eq(toWei('6500'))
+            // 2750 + 2750 = 5500
+            expect(await balance(red, INVESTOR1)).eq(toWei('5500'))
             expect(await balance(web3, WALLET)).eq(toWei('102'))
 
             // early bird round buy 2
             await buy(web3, INVESTOR2, redCrowdfund, '2')
-            // 2000 + (2750 * 2) = 7500
-            expect(await balance(red, INVESTOR2)).eq(toWei('7500'))
+            // 2750 * 2 = 5500
+            expect(await balance(red, INVESTOR2)).eq(toWei('5500'))
             expect(await balance(web3, WALLET)).eq(toWei('104'))
 
             // add white list
@@ -142,8 +136,8 @@ describe('Contract', function () {
 
             // early bird round buy 3
             await buy(web3, INVESTOR3, redCrowdfund, '1')
-            // 3000 + 2750 = 5750
-            expect(await balance(red, INVESTOR3)).eq(toWei('5750'))
+            // 2750
+            expect(await balance(red, INVESTOR3)).eq(toWei('2750'))
             expect(await balance(web3, WALLET)).eq(toWei('105'))
 
             // close early bird round
@@ -151,9 +145,17 @@ describe('Contract', function () {
 
             // Open round buy
             await buy(web3, INVESTOR2, redCrowdfund, '1')
-            // 7500 + 2500 = 10,000
-            expect(await balance(red, INVESTOR2)).eq(toWei('10000'))
+            // 5500 + 2500 = 10,000
+            expect(await balance(red, INVESTOR2)).eq(toWei('8000'))
             expect(await balance(web3, WALLET)).eq(toWei('106'))
+
+            // any transfer will fail before the end of ICO
+            try {
+                await send(red, ANGEL2, 'transfer', ANGEL1, toWei('300'))
+            } catch (e) {
+            }
+            expect(await balance(red, ANGEL1)).eq(toWei('1000'))
+            expect(await balance(red, ANGEL2)).eq(toWei('2000'))
 
             // close ICO
             await web3.evm.increaseTime(604800 * 4)         // 4 weeks
@@ -164,13 +166,56 @@ describe('Contract', function () {
                 await buy(web3, INVESTOR2, redCrowdfund, '1')
             } catch (e) {
             }
-            // 7500 + 2500 = 10,000
-            expect(await balance(red, INVESTOR2)).eq(toWei('10000'))
+            expect(await balance(red, INVESTOR2)).eq(toWei('8000'))
             expect(await balance(web3, WALLET)).eq(toWei('106'))
 
             await send(red, INVESTOR2, 'transfer', INVESTOR1, toWei('300'))
-            expect(await balance(red, INVESTOR1)).eq(toWei('6800'))
-            expect(await balance(red, INVESTOR2)).eq(toWei('9700'))
+            expect(await balance(red, INVESTOR1)).eq(toWei('5800'))
+            expect(await balance(red, INVESTOR2)).eq(toWei('7700'))
+
+            // transaction by angel is locked
+            try {
+                await send(red, ANGEL2, 'transfer', ANGEL1, toWei('300'))
+            } catch (e) {
+            }
+            expect(await balance(red, ANGEL1)).eq(toWei('1000'))
+            expect(await balance(red, ANGEL2)).eq(toWei('2000'))
+
+            // unlock 20% RED to angels
+            await send(red, DEPLOYER, 'partialUnlockAngelsAccounts', angelsAddr)
+            // now angels can transfer some REDs
+            await send(red, ANGEL1, 'transfer', ANGEL2, toWei('200'))
+            expect(await balance(red, ANGEL1)).eq(toWei('800'))
+            expect(await balance(red, ANGEL2)).eq(toWei('2200'))
+
+            // angel 1 unlocked: 1000 * 20% = 200
+            // he already transfered all his REDs to angel2
+            // try to unlock all angels's tokens will fail
+            try {
+                await send(red, DEPLOYER, 'fullUnlockAngelsAccounts', angelsAddr)
+            } catch (e) {}
+
+            // the following transfer will fail
+            try {
+                await send(red, ANGEL1, 'transfer', ANGEL2, toWei('1'))
+            } catch (e) {}
+            expect(await balance(red, ANGEL1)).eq(toWei('800'))
+            expect(await balance(red, ANGEL2)).eq(toWei('2200'))
+
+            // unlock all angels tokens
+            await web3.evm.increaseTime(86400 * 90)         // 90 days
+            await send(red, DEPLOYER, 'fullUnlockAngelsAccounts', angelsAddr)
+            // now they can do the tranfer
+            await send(red, ANGEL1, 'transfer', ANGEL2, toWei('800'))
+            expect(await balance(red, ANGEL1)).eq(toWei('0'))
+            expect(await balance(red, ANGEL2)).eq(toWei('3000'))
+
+            expect(await balance(red, TEAM)).eq(toWei('0'))
+            
+            // release Red Team token
+            await web3.evm.increaseTime(86400 * 275)         // andvance 275 days
+            await send(red, DEPLOYER, 'releaseRedTeamTokens')
+            expect(await balance(red, TEAM)).eq(toWei('30000000'))            
         })
     })
 

@@ -100,7 +100,7 @@ contract REDToken is ERC20, Ownable {
     // Transfers amount to address
     // -------------------------------------------------
     function transfer(address _to, uint256 _amount) public returns (bool success) {
-        require(balanceOf(msg.sender) >= _amount);
+        require(accounts[msg.sender] >= _amount);
         addToBalance(_to, _amount);
         decrementBalance(msg.sender, _amount);
         Transfer(msg.sender, _to, _amount);
