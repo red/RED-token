@@ -24,6 +24,10 @@
         <td id="symbol"></td>
     </tr>
     <tr>
+        <th>totalSupply</th>
+        <td id="totalSupply"></td>
+    </tr>
+    <tr>
         <th>angelAmountRemaining</th>
         <td id="angelAmountRemaining"></td>
     </tr>
@@ -35,8 +39,12 @@
     window.addEventListener('load', async function () {
         app = new App(window.Web3, window.web3.currentProvider)
         await app.loadContracts()
+
+        const eth = (wei) => fromWei(wei, 'ether')
+
         $('#symbol').textContent = await call(app.red, 'symbol')
-        $('#angelAmountRemaining').textContent = fromWei(await call(app.red, 'angelAmountRemaining'), 'ether')
+        $('#totalSupply').textContent = eth(await call(app.red, 'totalSupply'))
+        $('#angelAmountRemaining').textContent = eth(await call(app.red, 'angelAmountRemaining'))
     })
 </script>
 

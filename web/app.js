@@ -1,3 +1,5 @@
+const MAINNET_RED_ADDR = '0x76960dccd5a1fe799f7c29be9f19ceb4627aeb2f'
+
 const L = console.log
 const $ = (sel) => document.querySelector(sel)
 const {toBN, fromWei, toWei} = web3
@@ -26,17 +28,18 @@ class App {
 
     constructor(Web3, currentProvider) {
         L('Constructing app...')
-        this.web3 = new Web3(currentProvider)
+        // this.web3 = new Web3(currentProvider)
+        this.web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/'))
         L('Web3 version:', this.web3.version)
     }
 
-    async loadContract(jsonInterfaceUrl) {
+    async loadContract(jsonInterfaceUrl, ...[addressOverride]) {
         const {address, jsonInterface} = await (await fetchJSON(jsonInterfaceUrl)).json()
-        return new this.web3.eth.Contract(jsonInterface, address)
+        return new this.web3.eth.Contract(jsonInterface, addressOverride || address)
     }
 
     async loadContracts() {
-        this._red = await this.loadContract('REDToken.json')
+        this._red = await this.loadContract('REDToken.json', MAINNET_RED_ADDR)
         this._redCrowdfund = await this.loadContract('REDCrowdfund.json')
         this.logSymbol()
     }
