@@ -93,6 +93,21 @@ describe('Contract', function () {
             expect(await balance(red, ANGEL1)).eq(toWei('1000'))
             expect(await balance(red, ANGEL2)).eq(toWei('2000'))  
 
+            // !!! Others except DEPLOYER call this function will fail !!!
+            let walletAddr = await redCrowdfund.methods.wallet().call()
+            try {
+                await send(redCrowdfund, INVESTOR3, 'changeWalletAddress', ZERO_ADDR)
+            } catch (error) {}
+            let walletAddrNew = await redCrowdfund.methods.wallet().call()
+            expect(walletAddr).eq(walletAddrNew)
+
+            await send(redCrowdfund, DEPLOYER, 'changeWalletAddress', ZERO_ADDR)
+            walletAddrNew = await redCrowdfund.methods.wallet().call()
+            expect(walletAddrNew).eq(ZERO_ADDR)
+
+            // set wallet address back
+            await send(redCrowdfund, DEPLOYER, 'changeWalletAddress', walletAddr)
+
             // buying before early bird round will fail
             try {
                 await buy(web3, INVESTOR1, redCrowdfund, '1')
@@ -240,53 +255,44 @@ describe('Contract', function () {
             expect(await balance(red, ANGEL2)).eq(toWei('3000'))
 
             expect(await balance(red, TEAM)).eq(toWei('0'))
-            
+
             // release Red Team token
             await web3.evm.increaseTime(86400 * 275)         // andvance 275 days
             await send(red, DEPLOYER, 'releaseRedTeamTokens')
-            expect(await balance(red, TEAM)).eq(toWei('30000000'))            
+            expect(await balance(red, TEAM)).eq(toWei('30000000'))
+
+            // TBD: some security tests
+            /* -- Crowd Fund Contract -- */
+            // Others except DEPLOYER call this function will fail
+            // openCrowdfund
+
+            // Others except DEPLOYER call this function will fail
+            // closeCrowdfund
+
+            /* -- Token Contract -- */
+            // Others except CrowdFund contract call this function will fail
+            // startCrowdfund
+
+            // Others except CrowdFund contract call this function will fail
+            // transferFromCrowdfund
+
+            // Others except CrowdFund contract call this function will fail
+            // finalizeCrowdfund
+
+            // Others except DEPLOYER call this function will fail
+            // setCrowdfundAddress
+
+            // Others except DEPLOYER call this function will fail
+            // releaseRedTeamTokens
+
+            // Others except DEPLOYER call this function will fail
+            // finalizePresale
+
+            // Others except DEPLOYER call this function will fail
+            // deliverPresaleRedAccounts
+
+            // Others except DEPLOYER call this function will fail
+            // changeRedTeamAddress
         })
-    })
-
-    describe('Security Test', () => {
-        it('is token deployed', async () => {
-            let symbol = (await red.methods.symbol().call())
-            expect(symbol).equal('RED')
-        })
-
-        /* -- Crowd Fund Contract -- */
-        // Others except DEPLOYER call this function will fail
-        // changeWalletAddress
-
-        // Others except DEPLOYER call this function will fail
-        // openCrowdfund
-
-        // Others except DEPLOYER call this function will fail
-        // closeCrowdfund
-
-        /* -- Token Contract -- */
-        // Others except CrowdFund contract call this function will fail
-        // startCrowdfund
-
-        // Others except CrowdFund contract call this function will fail
-        // transferFromCrowdfund
-
-        // Others except CrowdFund contract call this function will fail
-        // finalizeCrowdfund
-
-        // Others except DEPLOYER call this function will fail
-        // setCrowdfundAddress
-
-        // Others except DEPLOYER call this function will fail
-        // releaseRedTeamTokens
-
-        // Others except DEPLOYER call this function will fail
-        // finalizePresale
-
-        // Others except DEPLOYER call this function will fail
-        // deliverPresaleRedAccounts
-
-        // Others except DEPLOYER call this function will fail
-        // changeRedTeamAddress
     })
 })
