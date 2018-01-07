@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>RED ICO contracts interface</title>
+</head>
+
+<body>
+
+<h1>RED ICO contracts interface</h1>
+<h2>Point your MetaMask to <code>Localhost 8545</code>!</h2>
+<p>See the JavaScript console for results!</p>
+<p>You can try evaluating:</p>
+<blockquote>
+    <code>
+        console.log(await app.logSymbol())
+    </code>
+</blockquote>
+
+<table>
+    <tr>
+        <th>Symbol</th>
+        <td id="symbol"></td>
+    </tr>
+    <tr>
+        <th>totalSupply</th>
+        <td id="totalSupply"></td>
+    </tr>
+    <tr>
+        <th>angelAmountRemaining</th>
+        <td id="angelAmountRemaining"></td>
+    </tr>
+    <tr>
+        <th>crowdfundAddress</th>
+        <td id="crowdfundAddress"></td>
+    </tr>
+</table>
+<script src="web3.js"></script>
+<script src="app.js"></script>
+<script>
+    let app
+    window.addEventListener('load', async function () {
+        // app = new App(window.Web3, window.web3.currentProvider)
+        app = new App(window.Web3, new Web3.providers.HttpProvider('https://mainnet.infura.io/'))
+        await app.loadContracts()
+        const {red, redCrowdfund} = app
+
+        const eth = (wei) => fromWei(wei, 'ether')
+
+        $('#symbol').textContent = await call(red, 'symbol')
+        $('#totalSupply').textContent = eth(await call(red, 'totalSupply'))
+        $('#angelAmountRemaining').textContent = eth(await call(red, 'angelAmountRemaining'))
+        $('#crowdfundAddress').textContent = eth(await call(red, 'crowdfundAddress'))
+    })
+</script>
+
+</body>
+</html>

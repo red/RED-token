@@ -1,0 +1,312 @@
+{
+    "from": "0x627306090abaB3A6e1400e9345bC60c78a8BEf57",
+    "gas": 4000000,
+    "name": "REDCrowdfund",
+    "address": "0xdDA6327139485221633A1FcD65f4aC932E60A2e1",
+    "jsonInterface": [
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "endsAt",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function",
+            "signature": "0x0a09284a"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "RED",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function",
+            "signature": "0x36d18b67"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "weiRaised",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function",
+            "signature": "0x4042b66f"
+        },
+        {
+            "constant": false,
+            "inputs": [],
+            "name": "openCrowdfund",
+            "outputs": [
+                {
+                    "name": "success",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function",
+            "signature": "0x44fff35c"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "isOpen",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function",
+            "signature": "0x47535d7b"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "wallet",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function",
+            "signature": "0x521eb273"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_batchOfAddresses",
+                    "type": "address[]"
+                }
+            ],
+            "name": "whitelistAccounts",
+            "outputs": [
+                {
+                    "name": "success",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function",
+            "signature": "0x5855279e"
+        },
+        {
+            "constant": false,
+            "inputs": [],
+            "name": "closeCrowdfund",
+            "outputs": [
+                {
+                    "name": "success",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function",
+            "signature": "0x75c26c3f"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function",
+            "signature": "0x8da5cb5b"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "tokenAddress",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function",
+            "signature": "0x9d76ea58"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "startsAt",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function",
+            "signature": "0xaf468682"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_to",
+                    "type": "address"
+                }
+            ],
+            "name": "buyTokens",
+            "outputs": [],
+            "payable": true,
+            "stateMutability": "payable",
+            "type": "function",
+            "signature": "0xec8ac4d8"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_wallet",
+                    "type": "address"
+                }
+            ],
+            "name": "changeWalletAddress",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function",
+            "signature": "0xec8edf7a"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "transferOwnership",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function",
+            "signature": "0xf2fde38b"
+        },
+        {
+            "inputs": [
+                {
+                    "name": "_tokenAddress",
+                    "type": "address"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor",
+            "signature": "constructor"
+        },
+        {
+            "payable": true,
+            "stateMutability": "payable",
+            "type": "fallback"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "_wallet",
+                    "type": "address"
+                }
+            ],
+            "name": "WalletAddressChanged",
+            "type": "event",
+            "signature": "0x341b96c24bdc448b946922ca5079d8eae9f1e40836d8cf0e2fb4659fcd55bcec"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "beneficiary",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "amountRaised",
+                    "type": "uint256"
+                }
+            ],
+            "name": "AmountRaised",
+            "type": "event",
+            "signature": "0x388489111a71afaf5f6b58d047fce6d8592b378d2c55d3113d836a7fa6918fd8"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "name": "purchaser",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "value",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "name": "amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "TokenPurchase",
+            "type": "event",
+            "signature": "0xcd60aa75dea3072fbc07ae6d7d856b5dc5f4eee88854f5b4abf7b680ef8bc50f"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "name": "previousOwner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnershipTransferred",
+            "type": "event",
+            "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+    ]
+}
