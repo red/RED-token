@@ -150,12 +150,21 @@ describe('Contract', function () {
             expect(await balance(web3, WALLET)).eq(toWei('106'))
 
             // any transfer will fail before the end of ICO
+            // fail case 1: angels
             try {
                 await send(red, ANGEL2, 'transfer', ANGEL1, toWei('300'))
             } catch (e) {
             }
             expect(await balance(red, ANGEL1)).eq(toWei('1000'))
             expect(await balance(red, ANGEL2)).eq(toWei('2000'))
+
+            // fail case 2: investors
+            try {
+                await send(red, INVESTOR2, 'transfer', INVESTOR1, toWei('300'))
+            } catch (e) {
+            }
+            expect(await balance(red, INVESTOR1)).eq(toWei('5500'))
+            expect(await balance(red, INVESTOR2)).eq(toWei('8000'))
 
             // close ICO
             await web3.evm.increaseTime(604800 * 4)         // 4 weeks
@@ -169,9 +178,29 @@ describe('Contract', function () {
             expect(await balance(red, INVESTOR2)).eq(toWei('8000'))
             expect(await balance(web3, WALLET)).eq(toWei('106'))
 
+            // investors except angels can trade now
             await send(red, INVESTOR2, 'transfer', INVESTOR1, toWei('300'))
             expect(await balance(red, INVESTOR1)).eq(toWei('5800'))
             expect(await balance(red, INVESTOR2)).eq(toWei('7700'))
+
+            //transferFrom will fail as we didn't do any approve
+            try {
+               await send(red, INVESTOR3, 'transferFrom', INVESTOR2, INVESTOR1, toWei('300'))
+            } catch (e) {}
+            expect(await balance(red, INVESTOR1)).eq(toWei('5800'))
+            expect(await balance(red, INVESTOR2)).eq(toWei('7700'))
+
+            // approve
+            // investor 2 deposit to investor 1 300 RED
+            await send(red, INVESTOR2, 'approve', INVESTOR1, toWei('300'))
+            expect((await send(red, INVESTOR3, 'allowance', INVESTOR2, INVESTOR1)) == toWei('300'))
+
+            // now transferFrom will success
+            // investor 1 send the token to investor 3
+            await send(red, INVESTOR1, 'transferFrom', INVESTOR2, INVESTOR3, toWei('300'))
+            expect(await balance(red, INVESTOR1)).eq(toWei('5800'))
+            expect(await balance(red, INVESTOR2)).eq(toWei('7400'))
+            expect(await balance(red, INVESTOR3)).eq(toWei('3050'))
 
             // transaction by angel is locked
             try {
@@ -259,39 +288,5 @@ describe('Contract', function () {
 
         // Others except DEPLOYER call this function will fail
         // changeRedTeamAddress
-    })
-
-    describe('ERC20 API Test', () => {
-        it('After ICO test ERC20 API', async () => {
-            // get some RED tokens
-            const addresses = [INVESTOR1, INVESTOR2, INVESTOR3]
-            const amounts = [1300, 1700, 3000]
-            await send(red, DEPLOYER, 'deliverAngelsREDAccounts', addresses, amounts)
-
-            // transfer
-            //await send(red, INVESTOR2, 'transfer', INVESTOR1, toWei('300'))
-            //expect(await balance(red, INVESTOR1)).eq(toWei('1000'))
-            //expect(await balance(red, INVESTOR2)).eq(toWei('2000'))
-
-            // transferFrom will fail as we didn't do any approve
-            try {
-                await send(red, INVESTOR3, 'transferFrom', INVESTOR2, INVESTOR1, toWei('300'))
-            } catch (e) {
-            }
-            expect(await balance(red, INVESTOR1)).eq(toWei('1300'))
-            expect(await balance(red, INVESTOR2)).eq(toWei('1700'))
-
-            // approve
-            // investor 2 deposit to investor 1 300 RED
-            await send(red, INVESTOR2, 'approve', INVESTOR1, toWei('300'))
-            expect((await send(red, INVESTOR3, 'allowance', INVESTOR2, INVESTOR1)) == toWei('300'))
-
-            // now transferFrom will success
-            // investor 1 send the token to investor 3
-            //await send(red, INVESTOR1, 'transferFrom', INVESTOR2, INVESTOR3, toWei('300'))
-            //expect(await balance(red, INVESTOR1)).eq(toWei('1300'))
-            //expect(await balance(red, INVESTOR2)).eq(toWei('1400'))
-            //expect(await balance(red, INVESTOR3)).eq(toWei('3300'))
-        })
     })
 })
