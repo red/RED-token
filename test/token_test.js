@@ -251,7 +251,7 @@ describe('Contract', function () {
             // approve
             // investor 2 deposit to investor 1 300 RED
             await send(red, INVESTOR2, 'approve', INVESTOR1, toWei('300'))
-            expect((await send(red, INVESTOR3, 'allowance', INVESTOR2, INVESTOR1)) == toWei('300'))
+            expect(await call(red, 'allowance', INVESTOR2, INVESTOR1)).eq(toWei('300'))
 
             // now transferFrom will success
             // investor 1 send the token to investor 3
