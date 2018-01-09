@@ -42,6 +42,10 @@ class App {
         // this._redCrowdfund = await this.loadContract('REDCrowdfund.json')
     }
 
+    async weiBalance(address) {
+        return this.web3.eth.getBalance(address)
+    }
+
     async logSymbol() {
         try {
             // If the token symbol is `bytes32` it can be converted to string like this:

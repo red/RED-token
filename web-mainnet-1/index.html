@@ -35,6 +35,14 @@
         <th>crowdfundAddress</th>
         <td id="crowdfundAddress"></td>
     </tr>
+    <tr>
+        <th>Crowdfund balance</th>
+        <td id="crowdfundBalance"></td>
+    </tr>
+    <tr>
+        <th>Deployer balance</th>
+        <td id="deployerBalance"></td>
+    </tr>
 </table>
 <script src="web3.js"></script>
 <script src="app.js"></script>
@@ -51,7 +59,10 @@
         $('#symbol').textContent = await call(red, 'symbol')
         $('#totalSupply').textContent = eth(await call(red, 'totalSupply'))
         $('#angelAmountRemaining').textContent = eth(await call(red, 'angelAmountRemaining'))
-        $('#crowdfundAddress').textContent = eth(await call(red, 'crowdfundAddress'))
+        const crowdfundAddress = await call(red, 'crowdfundAddress')
+        $('#crowdfundAddress').textContent = crowdfundAddress
+        $('#crowdfundBalance').textContent = eth(await app.weiBalance(crowdfundAddress))
+        $('#deployerBalance').textContent = eth(await app.weiBalance('0x627306090abab3a6e1400e9345bc60c78a8bef57'))
     })
 </script>
 

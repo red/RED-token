@@ -26,10 +26,9 @@ class App {
         return this._redCrowdfund
     }
 
-    constructor(Web3, currentProvider) {
+    constructor(Web3, provider) {
         L('Constructing app...')
-        // this.web3 = new Web3(currentProvider)
-        this.web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/'))
+        this.web3 = new Web3(provider)
         L('Web3 version:', this.web3.version)
     }
 
@@ -39,9 +38,12 @@ class App {
     }
 
     async loadContracts() {
-        this._red = await this.loadContract('REDToken.json', MAINNET_RED_ADDR)
+        this._red = await this.loadContract('REDToken.json'/*, MAINNET_RED_ADDR*/)
         this._redCrowdfund = await this.loadContract('REDCrowdfund.json')
-        this.logSymbol()
+    }
+
+    async weiBalance(address) {
+        return this.web3.eth.getBalance(address)
     }
 
     async logSymbol() {

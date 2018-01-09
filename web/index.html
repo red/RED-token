@@ -31,6 +31,18 @@
         <th>angelAmountRemaining</th>
         <td id="angelAmountRemaining"></td>
     </tr>
+    <tr>
+        <th>crowdfundAddress</th>
+        <td id="crowdfundAddress"></td>
+    </tr>
+    <tr>
+        <th>Crowdfund balance</th>
+        <td id="crowdfundBalance"></td>
+    </tr>
+    <tr>
+        <th>Deployer balance</th>
+        <td id="deployerBalance"></td>
+    </tr>
 </table>
 <script src="web3.js"></script>
 <script src="app.js"></script>
@@ -39,12 +51,17 @@
     window.addEventListener('load', async function () {
         app = new App(window.Web3, window.web3.currentProvider)
         await app.loadContracts()
+        const {red, redCrowdfund} = app
 
         const eth = (wei) => fromWei(wei, 'ether')
 
-        $('#symbol').textContent = await call(app.red, 'symbol')
-        $('#totalSupply').textContent = eth(await call(app.red, 'totalSupply'))
-        $('#angelAmountRemaining').textContent = eth(await call(app.red, 'angelAmountRemaining'))
+        $('#symbol').textContent = await call(red, 'symbol')
+        $('#totalSupply').textContent = eth(await call(red, 'totalSupply'))
+        $('#angelAmountRemaining').textContent = eth(await call(red, 'angelAmountRemaining'))
+        const crowdfundAddress = await call(red, 'crowdfundAddress')
+        $('#crowdfundAddress').textContent = crowdfundAddress
+        $('#crowdfundBalance').textContent = eth(await app.weiBalance(crowdfundAddress))
+        $('#deployerBalance').textContent = eth(await app.weiBalance('0x627306090abab3a6e1400e9345bc60c78a8bef57'))
     })
 </script>
 
