@@ -22,7 +22,7 @@ brew install node yarn solidity
 ### Common setup
 
 ```bash
-git clone git@github.com:dockimbel/RED-token.git
+git clone git@github.com:red/RED-token.git
 cd RED-token/
 yarn install
 ```
