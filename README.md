@@ -1,6 +1,6 @@
-# REN
+# RED Token
 
-Red Exchange Note
+Red community token
 
 ## Setup
 
